@@ -74,7 +74,7 @@ class _LoginState extends State<Login> {
               TextFormField(
                 controller: txtPassword,
                 obscureText: true,
-                validator: (val) => val!.isEmpty ? 'Invalid password' : null,
+                validator: (val) => val!.length < 6 ? 'Required at least 6 characters' : null,
                 decoration: kInputDecoration('Password'),
               ),
               SizedBox(height: 10),

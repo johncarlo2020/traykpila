@@ -50,7 +50,7 @@ Future<ApiResponse> register (String name,String email, String password) async {
       headers: {'Accept': 'application/json'},
       body: {
         'email':email,
-        'name':email,
+        'name':name,
         'password':password,
         'password_confirmation':password
         }
