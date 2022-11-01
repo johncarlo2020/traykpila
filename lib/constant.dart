@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-const baseUrl = 'http://192.168.1.19/traykpila-api/public/api';
+const baseUrl = 'http://192.168.100.84/traykpila-api/public/api';
 const loginUrl = baseUrl + '/login';
 const registerUrl = baseUrl + '/register';
 const logoutUrl = baseUrl + '/logout';
@@ -9,6 +9,8 @@ const userUrl = baseUrl + '/user';
 const serverError = 'Server error';
 const unauthorized = 'Unauthorized';
 const somethingWentWrong = 'Something went wrong, try again';
+
+const String google_api_key = "AIzaSyCHSbhwRN70xEw6oR-HDn8_mcMJtK0xvHI";
 
 
 InputDecoration kInputDecoration(String label){
