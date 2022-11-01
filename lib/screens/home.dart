@@ -17,9 +17,8 @@ class Home extends StatefulWidget {
 
 class _MyWidgetState extends State<Home> {
   final Completer<GoogleMapController> _controller = Completer();
-  static const LatLng sourceLocation= LatLng(14.9231306, 120.2019086);
-  static const LatLng destinationLocation= LatLng(14.9265898, 120.2024622);
-
+  bool loading = false;
+ 
   List<LatLng> polylineCoordinates = [];
   LocationData? currentLocation;
 
@@ -28,34 +27,19 @@ class _MyWidgetState extends State<Home> {
 
     location.getLocation().then(
       (location) {
+        setState(() {
+                        loading = false;
+                      });
         currentLocation=location;
       },
       );
   }
 
-  void getPolyPoints() async {
-    PolylinePoints polylinePoints = PolylinePoints();
-
-    PolylineResult result = await polylinePoints.getRouteBetweenCoordinates(
-      google_api_key, 
-      PointLatLng(sourceLocation.latitude, sourceLocation.latitude), 
-      PointLatLng(destinationLocation.latitude, destinationLocation.longitude)
-      );
-
-      if (result.points.isNotEmpty){
-        result.points.forEach(
-          (PointLatLng point) => polylineCoordinates.add(
-            LatLng(point.latitude, point.longitude)
-            ),
-          );
-      setState(() {});
-      }
-  }
 
   @override
   void initState(){
+    loading=true;
     getCurrentLocation();
-    getPolyPoints();
     super.initState();
   }
 
@@ -69,31 +53,17 @@ class _MyWidgetState extends State<Home> {
           style: TextStyle(color:Colors.black, fontSize: 16),
         )
       ),
-      body: currentLocation == null
-        ?const Center(child: Text("Loading"))
+      body: 
+        loading? Center(child: CircularProgressIndicator(),)
         :GoogleMap(
         initialCameraPosition: 
           CameraPosition(target: (LatLng(currentLocation!.latitude!,currentLocation!.longitude!)), zoom:  17),
-          polylines: {
-            Polyline(
-            polylineId: PolylineId("route"),
-            points:polylineCoordinates,
-            )
-          },
           markers: {
             Marker(
               markerId: const MarkerId("currentLocation"),
               position:LatLng(
                 currentLocation!.latitude!, currentLocation!.longitude!
                 )
-              ),
-            Marker(
-              markerId: MarkerId("source"),
-              position:sourceLocation,
-              ),
-              Marker(
-              markerId: MarkerId("destiantion"),
-              position:destinationLocation,
               ),
           },
         )
