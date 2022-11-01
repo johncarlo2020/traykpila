@@ -45,3 +45,14 @@ Row kLoinRegisterhint(String text, String label, Function onTap){
     );
 }
 
+Row kRow(String text,String text1, String label, Function onTap){
+  return Row(
+    mainAxisAlignment: MainAxisAlignment.center,
+    children: [
+      Text(text),
+      Text(text1),
+
+    ],
+    );
+}
+
