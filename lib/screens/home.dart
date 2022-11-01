@@ -19,7 +19,6 @@ class _MyWidgetState extends State<Home> {
   final Completer<GoogleMapController> _controller = Completer();
   static const LatLng sourceLocation= LatLng(14.9231306, 120.2019086);
   static const LatLng destinationLocation= LatLng(14.9265898, 120.2024622);
-  bool loading = false;
 
   List<LatLng> polylineCoordinates = [];
   LocationData? currentLocation;
@@ -28,9 +27,7 @@ class _MyWidgetState extends State<Home> {
     Location location = Location();
 
     location.getLocation().then(
-      
       (location) {
-        loading=false;
         currentLocation=location;
       },
       );
@@ -57,7 +54,6 @@ class _MyWidgetState extends State<Home> {
 
   @override
   void initState(){
-    loading = true;
     getCurrentLocation();
     getPolyPoints();
     super.initState();
@@ -73,8 +69,8 @@ class _MyWidgetState extends State<Home> {
           style: TextStyle(color:Colors.black, fontSize: 16),
         )
       ),
-      body: loading? Center(child: CircularProgressIndicator(),)
-        
+      body: currentLocation == null
+        ?const Center(child: Text("Loading"))
         :GoogleMap(
         initialCameraPosition: 
           CameraPosition(target: (LatLng(currentLocation!.latitude!,currentLocation!.longitude!)), zoom:  17),
@@ -91,7 +87,14 @@ class _MyWidgetState extends State<Home> {
                 currentLocation!.latitude!, currentLocation!.longitude!
                 )
               ),
-            
+            Marker(
+              markerId: MarkerId("source"),
+              position:sourceLocation,
+              ),
+              Marker(
+              markerId: MarkerId("destiantion"),
+              position:destinationLocation,
+              ),
           },
         )
     );
