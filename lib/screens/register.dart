@@ -18,7 +18,6 @@ class Register extends StatefulWidget {
 }
 
 class _RegisterState extends State<Register> {
-
   final GlobalKey<FormState> formkey = GlobalKey<FormState>();
   TextEditingController txtEmail = TextEditingController();
   TextEditingController txtName = TextEditingController();
@@ -27,46 +26,40 @@ class _RegisterState extends State<Register> {
   bool loading = false;
 
   void _registerUser() async {
-    ApiResponse response = await register(txtName.text, txtEmail.text, txtEmail.text);
-    if(response.error == null){
+    ApiResponse response =
+        await register(txtName.text, txtEmail.text, txtPassword.text);
+    if (response.error == null) {
       _saveAndRedirectToHome(response.data as User);
-    }else{
+    } else {
       setState(() {
-        loading=false;
+        loading = false;
       });
       // ignore: use_build_context_synchronously
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text('${response.error}')
-      ));
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text('${response.error}')));
     }
-
   }
 
-  void  _saveAndRedirectToHome(User user) async{
+  void _saveAndRedirectToHome(User user) async {
     SharedPreferences pref = await SharedPreferences.getInstance();
     await pref.setString('token', user.token ?? '');
     await pref.setInt('userId', user.id ?? 0);
-        // ignore: prefer_const_constructors, use_build_context_synchronously
-        Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) => Home()), (route) => false);
-
+    // ignore: prefer_const_constructors, use_build_context_synchronously
+    Navigator.of(context).pushAndRemoveUntil(
+        MaterialPageRoute(builder: (context) => Home()), (route) => false);
   }
-
-
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-        // ignore: prefer_const_constructors
-        title:Text('Traykpila'),
-        centerTitle:true,
-      ),
-
-      body: Form(
-        key: formkey,
-        child: ListView(
-          padding: EdgeInsets.all(32),
-            children: [
+          // ignore: prefer_const_constructors
+          title: Text('Traykpila'),
+          centerTitle: true,
+        ),
+        body: Form(
+            key: formkey,
+            child: ListView(padding: EdgeInsets.all(32), children: [
               TextFormField(
                 controller: txtName,
                 validator: (val) => val!.isEmpty ? 'Invalid Name' : null,
@@ -76,7 +69,8 @@ class _RegisterState extends State<Register> {
               TextFormField(
                 keyboardType: TextInputType.emailAddress,
                 controller: txtEmail,
-                validator: (val) => val!.isEmpty ? 'Invalid email address' : null,
+                validator: (val) =>
+                    val!.isEmpty ? 'Invalid email address' : null,
                 decoration: kInputDecoration('Email'),
               ),
               SizedBox(height: 10),
@@ -89,27 +83,25 @@ class _RegisterState extends State<Register> {
               SizedBox(height: 10),
               TextFormField(
                 controller: txtPassword2,
-                validator: (val) => val!=txtPassword.text ? 'Password not match' : null,
+                validator: (val) =>
+                    val != txtPassword.text ? 'Password not match' : null,
                 obscureText: true,
                 decoration: kInputDecoration('Repeat Password'),
               ),
-              kTextButton('Register', (){
-                 if(formkey.currentState!.validate()){
-                      setState(() {
-                        loading = true;
-                        _registerUser();
-                      });
-                    }
-                  
+              kTextButton('Register', () {
+                if (formkey.currentState!.validate()) {
+                  setState(() {
+                    loading = true;
+                    _registerUser();
+                  });
+                }
               }),
               SizedBox(height: 10),
-               kLoinRegisterhint('Already have an Account? ', 'Login', (){
-                Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) => Login()), (route) => false);
+              kLoinRegisterhint('Already have an Account? ', 'Login', () {
+                Navigator.of(context).pushAndRemoveUntil(
+                    MaterialPageRoute(builder: (context) => Login()),
+                    (route) => false);
               })
-            ]
-        )
-
-      )
-    );
+            ])));
   }
 }
