@@ -9,7 +9,9 @@ import 'package:traykpila/screens/register.dart';
 import 'package:traykpila/services/user_service.dart';
 
 import '../models/user.dart';
-import 'home.dart';
+import 'home.dart' as passengerHome;
+import 'driver/home.dart' as driverHome;
+
 
 class Login extends StatefulWidget {
   const Login({super.key});
@@ -45,10 +47,21 @@ class _LoginState extends State<Login> {
     SharedPreferences pref = await SharedPreferences.getInstance();
     await pref.setString('token', user.token ?? '');
     await pref.setInt('userId', user.id ?? 0);
+    await pref.setInt('userRole', user.role ?? 0);
+
+    if(user.role == 1){
+        Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) => driverHome.Home()), (route) => false);
+
+    }else{
+        Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) => passengerHome.Home()), (route) => false);
+
+    }
+
+    
         // ignore: prefer_const_constructors, use_build_context_synchronously
-        Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) => Home()), (route) => false);
 
   }
+  
 
   @override
   Widget build(BuildContext context) {

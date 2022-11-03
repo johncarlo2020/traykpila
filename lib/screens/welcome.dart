@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
-import 'package:traykpila/screens/login.dart';
+import 'package:traykpila/screens/register.dart' as registerPassenger;
+import 'package:traykpila/screens/driver/register.dart' as registerDriver;
+
 
 class Welcome extends StatefulWidget {
   const Welcome({super.key});
@@ -88,10 +90,10 @@ class _WelcomeState extends State<Welcome> {
                             backgroundColor: Color.fromRGBO(77, 206, 135, 1.0),
                           ),
                           onPressed: () {
-                            Navigator.push(
+                        Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (context) => const Login()));
+                                    builder: (context) => registerDriver.Register()));
                           },
                         ),
                       ),
@@ -115,7 +117,12 @@ class _WelcomeState extends State<Welcome> {
                           style: TextButton.styleFrom(
                             backgroundColor: Color.fromRGBO(77, 206, 135, 1.0),
                           ),
-                          onPressed: () {},
+                          onPressed: () {
+                                 Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => registerPassenger.Register()));
+                          },
                         ),
                       ),
                     )

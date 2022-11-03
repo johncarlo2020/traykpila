@@ -5,9 +5,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:traykpila/screens/login.dart';
 import 'package:traykpila/services/user_service.dart';
 
-import '../constant.dart';
-import '../models/api.response.dart';
-import '../models/user.dart';
+import '../../constant.dart';
+import '../../models/api.response.dart';
+import '../../models/user.dart';
 import 'home.dart';
 
 class Register extends StatefulWidget {
@@ -27,7 +27,7 @@ class _RegisterState extends State<Register> {
 
   void _registerUser() async {
     ApiResponse response =
-        await register(txtName.text, txtEmail.text, txtPassword.text, '0');
+        await register(txtName.text, txtEmail.text, txtPassword.text, '1');
     if (response.error == null) {
       _saveAndRedirectToHome(response.data as User);
     } else {

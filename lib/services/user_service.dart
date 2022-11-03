@@ -36,12 +36,13 @@ Future<ApiResponse> login (String email, String password) async {
   } 
   catch (e) {
     apiResponse.error = serverError;
+    print(e.toString());
   }
 
   return apiResponse;
 }
 
-Future<ApiResponse> register (String name,String email, String password) async {
+Future<ApiResponse> register (String name,String email, String password, String role) async {
   ApiResponse apiResponse = ApiResponse();
 
   try {
@@ -52,7 +53,8 @@ Future<ApiResponse> register (String name,String email, String password) async {
         'email':email,
         'name':name,
         'password':password,
-        'password_confirmation':password
+        'password_confirmation':password,
+        'role': role
         }
     );
     switch(response.statusCode){
