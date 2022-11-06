@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:traykpila/constant.dart';
 import 'package:traykpila/models/api.response.dart';
+import 'package:traykpila/screens/welcome.dart';
 import 'package:traykpila/services/user_service.dart';
 import 'package:traykpila/screens/login.dart';
 import 'package:traykpila/screens/home.dart';
@@ -21,7 +22,7 @@ class _LoadingState extends State<Loading> {
 
     if(token == ''){
       // ignore: prefer_const_constructors, use_build_context_synchronously
-      Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) => Login()), (route) => false);
+      Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) => Welcome()), (route) => false);
     }else{
       ApiResponse response = await getUserDetail();
 
@@ -30,7 +31,7 @@ class _LoadingState extends State<Loading> {
         Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) => Home()), (route) => false);
       }else if(response.error == unauthorized){
         // ignore: prefer_const_constructors, use_build_context_synchronously
-        Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) => Login()), (route) => false);
+        Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) => Welcome()), (route) => false);
       }else{
         // ignore: use_build_context_synchronously
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(

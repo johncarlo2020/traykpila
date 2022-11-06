@@ -3,14 +3,16 @@ class User {
   String? name;
   String? email;
   String? token;
-  int? role;
+  String? role;
+  String? address;
 
   User({
     this.id,
     this.name,
     this.email,
     this.token,
-    this.role
+    this.role,
+    this.address
   });
 
   factory User.fromJson(Map<String, dynamic>json){
@@ -18,8 +20,9 @@ class User {
       id:json['user']['id'],
       name:json['user']['name'],
       email:json['user']['email'],
-      role:json['user']['role'],
-      token:json['user']['token']
+      token:json['user']['token'],
+     address:json['user']['address']
+
     );
   }
 }

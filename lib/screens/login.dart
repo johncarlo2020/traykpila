@@ -43,7 +43,7 @@ class _LoginState extends State<Login> {
     SharedPreferences pref = await SharedPreferences.getInstance();
     await pref.setString('token', user.token ?? '');
     await pref.setInt('userId', user.id ?? 0);
-    await pref.setInt('userRole', user.role ?? 0);
+    await pref.setString('userRole', user.role ?? '0');
 
     if (user.role == 1) {
       // ignore: use_build_context_synchronously
@@ -160,14 +160,6 @@ class _LoginState extends State<Login> {
                   ? const Center(
                       child: CircularProgressIndicator(),
                     )
-                  // : kTextButton('Login', () {
-                  //     if (formkey.currentState!.validate()) {
-                  //       setState(() {
-                  //         loading = true;
-                  //         _loginUser();
-                  //       });
-                  //     }
-                  //   }),
                   : Padding(
                       padding: const EdgeInsets.only(top: 40.0),
                       child: TextButton(

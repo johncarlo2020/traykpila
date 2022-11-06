@@ -36,13 +36,14 @@ Future<ApiResponse> login (String email, String password) async {
   } 
   catch (e) {
     apiResponse.error = serverError;
-    print(e.toString());
+    
   }
 
   return apiResponse;
 }
 
-Future<ApiResponse> register (String name,String email, String password, String role) async {
+// ignore: non_constant_identifier_names
+Future<ApiResponse> register (String name,String email, String password,  String role , String address ) async {
   ApiResponse apiResponse = ApiResponse();
 
   try {
@@ -52,9 +53,11 @@ Future<ApiResponse> register (String name,String email, String password, String 
       body: {
         'email':email,
         'name':name,
+        'address' : address,
         'password':password,
         'password_confirmation':password,
         'role': role
+       
         }
     );
     switch(response.statusCode){
@@ -66,15 +69,19 @@ Future<ApiResponse> register (String name,String email, String password, String 
           apiResponse.error=errors[errors.keys.elementAt(0)][0];
           break;
       default:
+          final errors = jsonDecode(response.body);
+
            apiResponse.error = somethingWentWrong;
+
            break;
     }
   } 
   catch (e) {
     apiResponse.error = serverError;
   }
-
+ 
   return apiResponse;
+  
 }
 
 

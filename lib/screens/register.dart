@@ -30,8 +30,10 @@ class _RegisterState extends State<Register> {
   }
 
   void _registerUser() async {
+    String role='0';
     ApiResponse response =
-        await register(txtName.text, txtEmail.text, txtPassword.text, '0');
+        await register(txtName.text, txtEmail.text, txtPassword.text, role,txtAdress.text);
+       
     if (response.error == null) {
       _saveAndRedirectToHome(response.data as User);
     } else {
@@ -48,6 +50,7 @@ class _RegisterState extends State<Register> {
     SharedPreferences pref = await SharedPreferences.getInstance();
     await pref.setString('token', user.token ?? '');
     await pref.setInt('userId', user.id ?? 0);
+    await pref.setString('userRole', user.role ?? '0');
     // ignore: prefer_const_constructors, use_build_context_synchronously
     Navigator.of(context).pushAndRemoveUntil(
         MaterialPageRoute(builder: (context) => const Home()),
@@ -119,7 +122,6 @@ class _RegisterState extends State<Register> {
             const SizedBox(height: 10),
             TextFormField(
               controller: txtAdress,
-              keyboardType: TextInputType.streetAddress,
               validator: (val) => val!.isEmpty ? 'Invalid Address' : null,
               // ignore: prefer_const_constructors
               decoration: InputDecoration(
@@ -191,6 +193,7 @@ class _RegisterState extends State<Register> {
                 child: TextButton(
                     onPressed: () {
                       if (formkey.currentState!.validate()) {
+                        
                         setState(() {
                           loading = true;
                           _registerUser();
