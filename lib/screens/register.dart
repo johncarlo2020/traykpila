@@ -16,6 +16,8 @@ class Register extends StatefulWidget {
   State<Register> createState() => _RegisterState();
 }
 
+
+
 class _RegisterState extends State<Register> {
   final GlobalKey<FormState> formkey = GlobalKey<FormState>();
   TextEditingController txtEmail = TextEditingController();
@@ -30,7 +32,7 @@ class _RegisterState extends State<Register> {
   }
 
   void _registerUser() async {
-    String role='0';
+    String role = await getRole();
     ApiResponse response =
         await register(txtName.text, txtEmail.text, txtPassword.text, role,txtAdress.text);
        
@@ -50,7 +52,7 @@ class _RegisterState extends State<Register> {
     SharedPreferences pref = await SharedPreferences.getInstance();
     await pref.setString('token', user.token ?? '');
     await pref.setInt('userId', user.id ?? 0);
-    await pref.setString('userRole', user.role ?? '0');
+    await pref.setString('role', user.role ?? '0');
     // ignore: prefer_const_constructors, use_build_context_synchronously
     Navigator.of(context).pushAndRemoveUntil(
         MaterialPageRoute(builder: (context) => const Home()),

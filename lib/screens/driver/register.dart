@@ -187,7 +187,11 @@ class _RegisterState extends State<Register> {
                     size: 30,
                   )),
             ),
-
+              loading
+                  ? const Center(
+                      child: CircularProgressIndicator(),
+                    )
+                  :
             Padding(
                 padding: const EdgeInsets.only(top: 70.0),
                 child: TextButton(

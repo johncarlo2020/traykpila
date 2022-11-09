@@ -21,7 +21,9 @@ class User {
       name:json['user']['name'],
       email:json['user']['email'],
       token:json['user']['token'],
-     address:json['user']['address']
+     address:json['user']['address'],
+     role:json['user']['role'],
+
 
     );
   }

@@ -6,7 +6,7 @@ import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
 
-import '../constant.dart';
+import '../../constant.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -47,7 +47,7 @@ class _MyWidgetState extends State<Home> {
     return Scaffold(
         appBar: AppBar(
             title: const Text(
-          "Passenger Current Location",
+          "Admin Current Location",
           style: TextStyle(color: Colors.black, fontSize: 16),
         )),
         body: loading

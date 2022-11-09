@@ -11,6 +11,8 @@ import '../models/user.dart';
 import 'home.dart' as passengerHome;
 // ignore: library_prefixes
 import 'driver/home.dart' as driverHome;
+import 'admin/home.dart' as adminHome;
+
 
 class Login extends StatefulWidget {
   const Login({super.key});
@@ -39,18 +41,38 @@ class _LoginState extends State<Login> {
     }
   }
 
+  void _getRole() async{
+    String? role = await getRole();
+  }
+
+  @override
+  void initState() {
+    _getRole();
+    super.initState();
+  }
+
   void _saveAndRedirectToHome(User user) async {
     SharedPreferences pref = await SharedPreferences.getInstance();
     await pref.setString('token', user.token ?? '');
     await pref.setInt('userId', user.id ?? 0);
-    await pref.setString('userRole', user.role ?? '0');
+    await pref.setString('role', user.role ?? '0');
+    
+    String role = await getRoleLogin();
+    print(role);
 
-    if (user.role == 1) {
+    if (role == '1') {
       // ignore: use_build_context_synchronously
       Navigator.of(context).pushAndRemoveUntil(
           MaterialPageRoute(builder: (context) => driverHome.Home()),
           (route) => false);
-    } else {
+    } else if (role == '2') {
+      
+      // ignore: use_build_context_synchronously
+      Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute(builder: (context) => adminHome.Home()),
+          (route) => false);
+    }
+     else {
       // ignore: use_build_context_synchronously
       Navigator.of(context).pushAndRemoveUntil(
           MaterialPageRoute(builder: (context) => passengerHome.Home()),
@@ -188,7 +210,7 @@ class _LoginState extends State<Login> {
                           )),
                     ),
               const SizedBox(height: 10),
-              kLoinRegisterhint('Dont have an account? ', 'Register', () {
+              kLoinRegisterhint('Dont have an account? ', 'Register', () async {
                 Navigator.of(context).pushAndRemoveUntil(
                     MaterialPageRoute(builder: (context) => Register()),
                     (route) => false);
