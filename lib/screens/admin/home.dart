@@ -7,6 +7,8 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
 
 import '../../constant.dart';
+import '../../services/user_service.dart';
+import '../login.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -21,6 +23,11 @@ class _MyWidgetState extends State<Home> {
 
   List<LatLng> polylineCoordinates = [];
   LocationData? currentLocation;
+
+  signOut() async {
+    await logout();
+    Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) => Login()), (route) => false);
+  }
 
   void getCurrentLocation() {
     Location location = Location();
@@ -50,6 +57,13 @@ class _MyWidgetState extends State<Home> {
           "Admin Current Location",
           style: TextStyle(color: Colors.black, fontSize: 16),
         )),
+         floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          signOut();
+        },
+        child: Icon(Icons.logout_rounded),
+        backgroundColor: Colors.green,
+      ),
         body: loading
             ? Center(
                 child: CircularProgressIndicator(),

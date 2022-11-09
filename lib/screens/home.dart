@@ -5,6 +5,8 @@ import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
+import 'package:traykpila/screens/login.dart';
+import 'package:traykpila/services/user_service.dart';
 
 import '../constant.dart';
 
@@ -21,6 +23,18 @@ class _MyWidgetState extends State<Home> {
 
   List<LatLng> polylineCoordinates = [];
   LocationData? currentLocation;
+
+   signOut() async {
+    await logout();
+    Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) => Login()), (route) => false);
+  }
+  
+  void _getToken() async{
+    String token = await getToken();
+    print(token);
+  } 
+
+
 
   void getCurrentLocation() {
     Location location = Location();
@@ -39,6 +53,7 @@ class _MyWidgetState extends State<Home> {
   void initState() {
     loading = true;
     getCurrentLocation();
+    _getToken();
     super.initState();
   }
 
@@ -50,6 +65,13 @@ class _MyWidgetState extends State<Home> {
           "Passenger Current Location",
           style: TextStyle(color: Colors.black, fontSize: 16),
         )),
+        floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          signOut();
+        },
+        child: Icon(Icons.logout_rounded),
+        backgroundColor: Colors.green,
+      ),
         body: loading
             ? Center(
                 child: CircularProgressIndicator(),

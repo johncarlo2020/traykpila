@@ -27,6 +27,9 @@ class _LoginState extends State<Login> {
   TextEditingController txtPassword = TextEditingController();
   bool loading = false;
 
+  
+  
+
   void _loginUser() async {
     ApiResponse response = await login(txtEmail.text, txtPassword.text);
     if (response.error == null) {
@@ -45,9 +48,12 @@ class _LoginState extends State<Login> {
     String? role = await getRole();
   }
 
+
+
   @override
   void initState() {
     _getRole();
+ 
     super.initState();
   }
 
@@ -58,7 +64,10 @@ class _LoginState extends State<Login> {
     await pref.setString('role', user.role ?? '0');
     
     String role = await getRoleLogin();
-    print(role);
+    String token = await getToken();
+    
+    print(token);
+   
 
     if (role == '1') {
       // ignore: use_build_context_synchronously

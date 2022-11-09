@@ -20,7 +20,7 @@ class User {
       id:json['user']['id'],
       name:json['user']['name'],
       email:json['user']['email'],
-      token:json['user']['token'],
+      token:json['token'],
      address:json['user']['address'],
      role:json['user']['role'],
 
