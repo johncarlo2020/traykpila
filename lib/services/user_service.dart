@@ -6,6 +6,7 @@ import 'package:traykpila/constant.dart';
 import 'package:traykpila/models/api.response.dart';
 import 'package:traykpila/constant.dart';
 import 'package:http/http.dart' as http;
+import 'package:traykpila/models/terminal.dart';
 
 import '../models/user.dart';
 
@@ -103,6 +104,42 @@ Future<ApiResponse> getUserDetail() async {
   }
 
   return apiResponse;
+}
+
+Future<int> getTerminalCount() async {
+  String token = await getToken();
+  final response = await http.post(Uri.parse(terminalCount), headers: {
+    'Accept': 'application/json',
+    'Authorization': 'Bearer $token'
+  });
+  Map<String, dynamic> data =
+      Map<String, dynamic>.from(json.decode(response.body));
+
+  return data['count'];
+}
+
+Future<int> getUserCount() async {
+  String token = await getToken();
+  final response = await http.post(Uri.parse(userCount), headers: {
+    'Accept': 'application/json',
+    'Authorization': 'Bearer $token'
+  });
+  Map<String, dynamic> data =
+      Map<String, dynamic>.from(json.decode(response.body));
+
+  return data['count'];
+}
+
+Future<int> getDriverCount() async {
+  String token = await getToken();
+  final response = await http.post(Uri.parse(driverCount), headers: {
+    'Accept': 'application/json',
+    'Authorization': 'Bearer $token'
+  });
+  Map<String, dynamic> data =
+      Map<String, dynamic>.from(json.decode(response.body));
+
+  return data['count'];
 }
 
 Future<String> getToken() async {

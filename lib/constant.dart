@@ -1,11 +1,18 @@
+// ignore_for_file: non_constant_identifier_names
+
 import 'package:flutter/material.dart';
 
-const baseUrl = 'http://192.168.1.13/traykpila-api/public/api';
+const baseUrl = 'http://192.168.100.84/traykpila-api/public/api';
 // const baseUrl = 'http://192.168.1.13/traykpila-api/public/api';
 const loginUrl = baseUrl + '/login';
 const registerUrl = baseUrl + '/register';
 const logoutUrl = baseUrl + '/logout';
 const userUrl = baseUrl + '/user';
+
+//terminal api
+const terminalCount = baseUrl + '/terminal/count';
+const userCount = baseUrl + '/user/count';
+const driverCount = baseUrl + '/driver/count';
 
 const serverError = 'Server error';
 const unauthorized = 'Unauthorized';
@@ -59,7 +66,7 @@ Row kRow(String text, String text1, String label, Function onTap) {
   );
 }
 
-Padding Dashboard() {
+Padding Dashboard(String Terminal, String User, String Driver) {
   return Padding(
     padding: const EdgeInsets.only(top: 20.0),
     child: ListView(
@@ -125,10 +132,7 @@ Padding Dashboard() {
                     ),
                     const Spacer(),
                     Column(
-                      children: const [
-                        Text('fuck u'),
-                        Text('fuck u'),
-                      ],
+                      children: [Text('Terminal'), Text(Terminal)],
                     ),
                   ],
                 ),
@@ -162,10 +166,7 @@ Padding Dashboard() {
                     ),
                     const Spacer(),
                     Column(
-                      children: const [
-                        Text('fuck u'),
-                        Text('fuck u'),
-                      ],
+                      children: [Text('User'), Text(User)],
                     ),
                   ],
                 ),
@@ -200,10 +201,7 @@ Padding Dashboard() {
                 ),
                 const Spacer(),
                 Column(
-                  children: const [
-                    Text('fuck u'),
-                    Text('fuck u'),
-                  ],
+                  children: [Text('Driver'), Text(Driver)],
                 ),
               ],
             ),

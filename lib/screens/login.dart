@@ -47,7 +47,6 @@ class _LoginState extends State<Login> {
   @override
   void initState() {
     _getRole();
-
     super.initState();
   }
 
