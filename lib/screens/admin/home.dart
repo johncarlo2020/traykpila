@@ -85,6 +85,7 @@ class _MyWidgetState extends State<Home> {
         backgroundColor: Colors.greenAccent[400],
         elevation: 50.0,
       ),
+      drawer: NavigationDrawer(),
       //AppBar
       body: Center(
         child: _pages.elementAt(_selectedIndex), //New
