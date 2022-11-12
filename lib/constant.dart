@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
-const baseUrl = 'http://192.168.100.84/traykpila-api/public/api';
+const baseUrl = 'http://192.168.1.13/traykpila-api/public/api';
+// const baseUrl = 'http://192.168.1.13/traykpila-api/public/api';
 const loginUrl = baseUrl + '/login';
 const registerUrl = baseUrl + '/register';
 const logoutUrl = baseUrl + '/logout';
@@ -58,45 +59,157 @@ Row kRow(String text, String text1, String label, Function onTap) {
   );
 }
 
-Padding Dashboard(){
+Padding Dashboard() {
   return Padding(
-        padding: const EdgeInsets.only(top: 20.0),
-        child: Form(
-          child: ListView(
-            padding: const EdgeInsets.all(32),
-            // ignore: prefer_const_literals_to_create_immutables
-            children: [
-               const Image(
-                image: AssetImage('assets/logoforwhite.png'),
-                width: 150,
-                height: 150,
-              ),
-              const Text(
-                'Welcome to TraykPila',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 30,
-                  fontWeight: FontWeight.bold,
-                  color: Color.fromARGB(255, 25, 154, 90),
-                ),
-              ),
-              const Padding(
-                padding: EdgeInsets.only(
-                  top: 5.0,
-                  bottom: 30.0,
-                ),
-                child: Text(
-                  'Your nunber one tricycle booking App in the Philippines',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.normal,
-                    color: Color.fromARGB(255, 25, 154, 90),
-                  ),
-                ),
-              ),
-            ],
+    padding: const EdgeInsets.only(top: 20.0),
+    child: ListView(
+      padding: const EdgeInsets.all(32),
+      // ignore: prefer_const_literals_to_create_immutables
+      children: [
+        const Image(
+          image: AssetImage('assets/logoforwhite.png'),
+          width: 150,
+          height: 150,
+        ),
+        const Text(
+          'Welcome to TraykPila',
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            fontSize: 30,
+            fontWeight: FontWeight.bold,
+            color: Color.fromARGB(255, 25, 154, 90),
           ),
         ),
-      );
+        const Padding(
+          padding: EdgeInsets.only(
+            top: 5.0,
+            bottom: 30.0,
+          ),
+          child: Text(
+            'Your nunber one tricycle booking App in the Philippines',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.normal,
+              color: Color.fromARGB(255, 25, 154, 90),
+            ),
+          ),
+        ),
+        Row(
+          children: <Widget>[
+            Expanded(
+              child: Container(
+                margin: const EdgeInsets.all(10.0),
+                width: 90.0,
+                height: 90.0,
+                // ignore: unnecessary_new
+                decoration: new BoxDecoration(
+                  borderRadius: BorderRadius.circular(6),
+                  color: const Color.fromRGBO(77, 206, 135, 1.0),
+                  border: Border.all(
+                      color: const Color.fromARGB(255, 255, 255, 255)),
+                  // ignore: prefer_const_literals_to_create_immutables
+                  boxShadow: [
+                    // BoxShadow(color: Colors.green, spreadRadius: 3),
+                  ],
+                ),
+                child: Row(
+                  children: [
+                    IconButton(
+                      icon: Image.asset('assets/pasenger.png'),
+                      style: TextButton.styleFrom(
+                        backgroundColor:
+                            const Color.fromRGBO(77, 206, 135, 1.0),
+                      ),
+                      onPressed: () {},
+                    ),
+                    const Spacer(),
+                    Column(
+                      children: const [
+                        Text('fuck u'),
+                        Text('fuck u'),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            Expanded(
+              child: Container(
+                margin: const EdgeInsets.all(10.0),
+                width: 90.0,
+                height: 90.0,
+                // ignore: unnecessary_new
+                decoration: new BoxDecoration(
+                  borderRadius: BorderRadius.circular(6),
+                  color: const Color.fromRGBO(77, 206, 135, 1.0),
+                  border: Border.all(
+                      color: const Color.fromARGB(255, 255, 255, 255)),
+                  // ignore: prefer_const_literals_to_create_immutables
+                  boxShadow: [
+                    // BoxShadow(color: Colors.green, spreadRadius: 3),
+                  ],
+                ),
+                child: Row(
+                  children: [
+                    IconButton(
+                      icon: Image.asset('assets/pasenger.png'),
+                      style: TextButton.styleFrom(
+                        backgroundColor:
+                            const Color.fromRGBO(77, 206, 135, 1.0),
+                      ),
+                      onPressed: () {},
+                    ),
+                    const Spacer(),
+                    Column(
+                      children: const [
+                        Text('fuck u'),
+                        Text('fuck u'),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+        Expanded(
+          child: Container(
+            margin: const EdgeInsets.all(10.0),
+            width: 90.0,
+            height: 90.0,
+            // ignore: unnecessary_new
+            decoration: new BoxDecoration(
+              borderRadius: BorderRadius.circular(6),
+              color: const Color.fromRGBO(77, 206, 135, 1.0),
+              border:
+                  Border.all(color: const Color.fromARGB(255, 255, 255, 255)),
+              // ignore: prefer_const_literals_to_create_immutables
+              boxShadow: [
+                // BoxShadow(color: Colors.green, spreadRadius: 3),
+              ],
+            ),
+            child: Row(
+              children: [
+                IconButton(
+                  icon: Image.asset('assets/pasenger.png'),
+                  style: TextButton.styleFrom(
+                    backgroundColor: const Color.fromRGBO(77, 206, 135, 1.0),
+                  ),
+                  onPressed: () {},
+                ),
+                const Spacer(),
+                Column(
+                  children: const [
+                    Text('fuck u'),
+                    Text('fuck u'),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        )
+      ],
+    ),
+  );
 }

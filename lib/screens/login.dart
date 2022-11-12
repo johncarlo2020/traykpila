@@ -13,7 +13,6 @@ import 'home.dart' as passengerHome;
 import 'driver/home.dart' as driverHome;
 import 'admin/home.dart' as adminHome;
 
-
 class Login extends StatefulWidget {
   const Login({super.key});
 
@@ -26,9 +25,6 @@ class _LoginState extends State<Login> {
   TextEditingController txtEmail = TextEditingController();
   TextEditingController txtPassword = TextEditingController();
   bool loading = false;
-
-  
-  
 
   void _loginUser() async {
     ApiResponse response = await login(txtEmail.text, txtPassword.text);
@@ -44,16 +40,14 @@ class _LoginState extends State<Login> {
     }
   }
 
-  void _getRole() async{
+  void _getRole() async {
     String? role = await getRole();
   }
-
-
 
   @override
   void initState() {
     _getRole();
- 
+
     super.initState();
   }
 
@@ -62,12 +56,11 @@ class _LoginState extends State<Login> {
     await pref.setString('token', user.token ?? '');
     await pref.setInt('userId', user.id ?? 0);
     await pref.setString('role', user.role ?? '0');
-    
+
     String role = await getRoleLogin();
     String token = await getToken();
-    
-    print(token);
-   
+
+    print(role);
 
     if (role == '1') {
       // ignore: use_build_context_synchronously
@@ -75,13 +68,11 @@ class _LoginState extends State<Login> {
           MaterialPageRoute(builder: (context) => driverHome.Home()),
           (route) => false);
     } else if (role == '2') {
-      
       // ignore: use_build_context_synchronously
       Navigator.of(context).pushAndRemoveUntil(
           MaterialPageRoute(builder: (context) => adminHome.Home()),
           (route) => false);
-    }
-     else {
+    } else {
       // ignore: use_build_context_synchronously
       Navigator.of(context).pushAndRemoveUntil(
           MaterialPageRoute(builder: (context) => passengerHome.Home()),
