@@ -136,8 +136,8 @@ class _MyWidgetState extends State<Home> {
       'lat': currentLocation!.latitude!.toString(),
       'lng': currentLocation!.longitude!.toString(),
     };
-    addImage(body, _image.path);
-    print(body);
+    Future<bool> add = addImage(body, _image.path);
+    print(add);
   }
 
   @override
@@ -269,7 +269,15 @@ class _MyWidgetState extends State<Home> {
                   padding: const EdgeInsets.only(top: 70.0),
                   child: TextButton(
                       onPressed: () {
-                        _register();
+                        if (formkey.currentState!.validate()) {
+                          formkey.currentState!.save();
+                          _register();
+                          Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (BuildContext context) =>
+                                      super.widget));
+                        }
                       },
                       style: ButtonStyle(
                           backgroundColor: MaterialStateProperty.all(
