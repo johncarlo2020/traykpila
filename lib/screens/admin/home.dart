@@ -35,7 +35,7 @@ class _MyWidgetState extends State<Home> {
   late String driverCount = '';
   late File _image;
   final picker = ImagePicker();
-  var sreenName = '';
+  var sreenName = 'Dashboard';
 
   bool loading = false;
   // ignore: non_constant_identifier_names
