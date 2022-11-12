@@ -7,7 +7,10 @@ import 'package:traykpila/services/user_service.dart';
 import '../constant.dart';
 import '../models/api.response.dart';
 import '../models/user.dart';
-import 'home.dart';
+import 'home.dart' as passengerHome;
+// ignore: library_prefixes
+import 'driver/home.dart' as driverHome;
+import 'admin/home.dart' as adminHome;
 
 class Register extends StatefulWidget {
   const Register({super.key});
@@ -15,8 +18,6 @@ class Register extends StatefulWidget {
   @override
   State<Register> createState() => _RegisterState();
 }
-
-
 
 class _RegisterState extends State<Register> {
   final GlobalKey<FormState> formkey = GlobalKey<FormState>();
@@ -33,9 +34,10 @@ class _RegisterState extends State<Register> {
 
   void _registerUser() async {
     String role = await getRole();
-    ApiResponse response =
-        await register(txtName.text, txtEmail.text, txtPassword.text, role,txtAdress.text);
-       
+    print(role);
+    ApiResponse response = await register(
+        txtName.text, txtEmail.text, txtPassword.text, role, txtAdress.text);
+
     if (response.error == null) {
       _saveAndRedirectToHome(response.data as User);
     } else {
@@ -53,10 +55,24 @@ class _RegisterState extends State<Register> {
     await pref.setString('token', user.token ?? '');
     await pref.setInt('userId', user.id ?? 0);
     await pref.setString('role', user.role ?? '0');
+    String role = await getRoleLogin();
     // ignore: prefer_const_constructors, use_build_context_synchronously
-    Navigator.of(context).pushAndRemoveUntil(
-        MaterialPageRoute(builder: (context) => const Home()),
-        (route) => false);
+    if (role == '1') {
+      // ignore: use_build_context_synchronously
+      Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute(builder: (context) => driverHome.Home()),
+          (route) => false);
+    } else if (role == '2') {
+      // ignore: use_build_context_synchronously
+      Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute(builder: (context) => adminHome.Home()),
+          (route) => false);
+    } else {
+      // ignore: use_build_context_synchronously
+      Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute(builder: (context) => passengerHome.Home()),
+          (route) => false);
+    }
   }
 
   @override
@@ -195,7 +211,6 @@ class _RegisterState extends State<Register> {
                 child: TextButton(
                     onPressed: () {
                       if (formkey.currentState!.validate()) {
-                        
                         setState(() {
                           loading = true;
                           _registerUser();

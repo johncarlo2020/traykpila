@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:traykpila/screens/register.dart' as registerPassenger;
 import 'package:traykpila/screens/driver/register.dart' as registerDriver;
-
 
 class Welcome extends StatefulWidget {
   const Welcome({super.key});
@@ -89,11 +89,16 @@ class _WelcomeState extends State<Welcome> {
                           style: TextButton.styleFrom(
                             backgroundColor: Color.fromRGBO(77, 206, 135, 1.0),
                           ),
-                          onPressed: () {
-                        Navigator.push(
+                          onPressed: () async {
+                            SharedPreferences pref =
+                                await SharedPreferences.getInstance();
+                            await pref.setString('userRole', '1');
+                            print(1);
+                            Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (context) => registerDriver.Register()));
+                                    builder: (context) =>
+                                        registerPassenger.Register()));
                           },
                         ),
                       ),
@@ -117,11 +122,16 @@ class _WelcomeState extends State<Welcome> {
                           style: TextButton.styleFrom(
                             backgroundColor: Color.fromRGBO(77, 206, 135, 1.0),
                           ),
-                          onPressed: () {
-                                 Navigator.push(
+                          onPressed: () async {
+                            SharedPreferences pref =
+                                await SharedPreferences.getInstance();
+                            await pref.setString('userRole', '0');
+                            print(0);
+                            Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (context) => registerPassenger.Register()));
+                                    builder: (context) =>
+                                        registerPassenger.Register()));
                           },
                         ),
                       ),
