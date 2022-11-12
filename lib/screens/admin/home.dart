@@ -67,10 +67,7 @@ class _MyWidgetState extends State<Home> {
     // ignore: no_leading_underscores_for_local_identifiers
     List<Widget> _pages = <Widget>[
       Dashboard(terminalCount, userCount, driverCount),
-      Icon(
-        Icons.camera,
-        size: 150,
-      ),
+      AddTerminal(),
       Icon(
         Icons.chat,
         size: 150,
