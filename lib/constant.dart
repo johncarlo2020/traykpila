@@ -2,8 +2,8 @@
 
 import 'package:flutter/material.dart';
 
-const baseUrl = 'http://192.168.100.84/traykpila-api/public/api';
-// const baseUrl = 'http://192.168.1.13/traykpila-api/public/api';
+// const baseUrl = 'http://192.168.100.84/traykpila-api/public/api';
+const baseUrl = 'http://192.168.1.13/traykpila-api/public/api';
 const loginUrl = baseUrl + '/login';
 const registerUrl = baseUrl + '/register';
 const logoutUrl = baseUrl + '/logout';

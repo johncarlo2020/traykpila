@@ -33,11 +33,11 @@ class _MyWidgetState extends State<Home> {
 
   int _selectedIndex = 0;
 
-  signOut() async {
-    await logout();
-    Navigator.of(context).pushAndRemoveUntil(
-        MaterialPageRoute(builder: (context) => Login()), (route) => false);
-  }
+  // signOut() async {
+  //   await logout();
+  //   Navigator.of(context).pushAndRemoveUntil(
+  //       MaterialPageRoute(builder: (context) => Login()), (route) => false);
+  // }
 
   void _onItemTapped(int index) {
     setState(() {
@@ -78,29 +78,17 @@ class _MyWidgetState extends State<Home> {
     ];
     return Scaffold(
       appBar: AppBar(
-        actions: <Widget>[
-          //IconButton
-          IconButton(
-            icon: const Icon(Icons.account_circle),
-            tooltip: 'Setting Icon',
-            onPressed: () {},
+        actions: const <Widget>[
+          Image(
+            image: AssetImage('assets/logoforwhite.png'),
+            width: 50,
+            height: 50,
           ), //IconButton
         ], //<Widget>[]
         backgroundColor: Colors.greenAccent[400],
         elevation: 50.0,
-        leading: const Image(
-          image: AssetImage('assets/logoforwhite.png'),
-          width: 150,
-          height: 150,
-        ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          signOut();
-        },
-        child: Icon(Icons.logout_rounded),
-        backgroundColor: Colors.green,
-      ), //AppBar
+      drawer: const NavigationDrawer(), //AppBar
       body: Center(
         child: _pages.elementAt(_selectedIndex), //New
       ),
@@ -128,4 +116,61 @@ class _MyWidgetState extends State<Home> {
       ),
     );
   }
+}
+
+class NavigationDrawer extends StatelessWidget {
+  const NavigationDrawer({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) => Drawer(
+          child: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.only(top: 60.0),
+          child: Wrap(
+            runSpacing: 16,
+            children: <Widget>[
+              ListTile(
+                  leading: const Icon(Icons.logout),
+                  title: const Text('Log-out'),
+                  onTap: () async {
+                    await logout();
+                    // ignore: use_build_context_synchronously
+                    Navigator.of(context).pushAndRemoveUntil(
+                        MaterialPageRoute(builder: (context) => Login()),
+                        (route) => false);
+                  }),
+              ListTile(
+                  leading: const Icon(Icons.logout),
+                  title: const Text('Log-out'),
+                  onTap: () async {
+                    await logout();
+                    // ignore: use_build_context_synchronously
+                    Navigator.of(context).pushAndRemoveUntil(
+                        MaterialPageRoute(builder: (context) => Login()),
+                        (route) => false);
+                  }),
+              ListTile(
+                  leading: const Icon(Icons.logout),
+                  title: const Text('Log-out'),
+                  onTap: () async {
+                    await logout();
+                    // ignore: use_build_context_synchronously
+                    Navigator.of(context).pushAndRemoveUntil(
+                        MaterialPageRoute(builder: (context) => Login()),
+                        (route) => false);
+                  }),
+              ListTile(
+                  leading: const Icon(Icons.logout),
+                  title: const Text('Log-out'),
+                  onTap: () async {
+                    await logout();
+                    // ignore: use_build_context_synchronously
+                    Navigator.of(context).pushAndRemoveUntil(
+                        MaterialPageRoute(builder: (context) => Login()),
+                        (route) => false);
+                  }),
+            ],
+          ),
+        ),
+      ));
 }
