@@ -7,8 +7,25 @@ import 'package:traykpila/models/api.response.dart';
 import 'package:traykpila/constant.dart';
 import 'package:http/http.dart' as http;
 import 'package:traykpila/models/terminal.dart';
+import 'dart:convert';
 
 import '../models/user.dart';
+
+Future<bool> addImage(Map<String, String> body, String filepath) async {
+  Map<String, String> headers = {
+    'Content-Type': 'multipart/form-data',
+  };
+  var request = http.MultipartRequest('POST', Uri.parse(terminalCreate))
+    ..fields.addAll(body)
+    ..headers.addAll(headers)
+    ..files.add(await http.MultipartFile.fromPath('image', filepath));
+  var response = await request.send();
+  if (response.statusCode == 201) {
+    return true;
+  } else {
+    return false;
+  }
+}
 
 Future<ApiResponse> login(String email, String password) async {
   ApiResponse apiResponse = ApiResponse();
