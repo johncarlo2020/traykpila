@@ -294,16 +294,74 @@ class _MyWidgetState extends State<Home> {
         ),
       );
 
+  // ignore: non_constant_identifier_names
+  Widget TerminalList() => Padding(
+        padding: const EdgeInsets.only(top: 10.0),
+        child: Padding(
+          padding: const EdgeInsets.all(20.0),
+          child: (Column(
+            children: [
+              TextFormField(
+                validator: (val) => val!.isEmpty ? 'Invalid Name' : null,
+                // ignore: prefer_const_constructors
+                decoration: InputDecoration(
+                    isDense: true,
+                    labelText: 'Search Terminal',
+                    border: InputBorder.none,
+                    filled: true,
+                    fillColor: const Color.fromRGBO(229, 255, 238, 1.0),
+                    prefixIcon: const Icon(
+                      Icons.search_outlined,
+                      size: 30,
+                    )),
+              ),
+              const Divider(
+                height: 20,
+                thickness: 2,
+                indent: 0,
+                endIndent: 0,
+                color: Color.fromARGB(255, 49, 241, 129),
+              ),
+              Expanded(
+                  child: ListView(
+                children: const <Widget>[
+                  Card(
+                    child: ListTile(
+                      leading: Icon(
+                        Icons.map,
+                        size: 30.0,
+                        color: Color.fromARGB(255, 72, 206, 133),
+                      ),
+                      title: Text('Terminal name'),
+                      subtitle: Text('Driver count'),
+                      trailing: Text('view'),
+                    ),
+                  ),
+                  Card(
+                    child: ListTile(
+                      leading: Icon(
+                        Icons.map,
+                        size: 30.0,
+                        color: Color.fromARGB(255, 72, 206, 133),
+                      ),
+                      title: Text('Terminal name'),
+                      subtitle: Text('Driver count'),
+                      trailing: Text('view'),
+                    ),
+                  )
+                ],
+              ))
+            ],
+          )),
+        ),
+      );
   Widget build(BuildContext context) {
     // ignore: no_leading_underscores_for_local_identifiers
 
     List<Widget> _pages = <Widget>[
       Dashboard(terminalCount, userCount, driverCount),
       AddTerminal(),
-      Icon(
-        Icons.chat,
-        size: 150,
-      ),
+      TerminalList(),
     ];
     return Scaffold(
       appBar: AppBar(
