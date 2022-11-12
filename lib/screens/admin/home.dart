@@ -34,6 +34,8 @@ class _MyWidgetState extends State<Home> {
   late String driverCount = '';
   late File _image;
   final picker = ImagePicker();
+  var sreenName = '';
+
   bool loading = false;
   // ignore: non_constant_identifier_names
 
@@ -65,6 +67,20 @@ class _MyWidgetState extends State<Home> {
     setState(() {
       _selectedIndex = index;
     });
+
+    switch (index) {
+      case 0:
+        sreenName = 'Dashboard';
+        break;
+
+      case 1:
+        sreenName = 'Add Terminal';
+        break;
+
+      case 2:
+        sreenName = 'Terminal List';
+        break;
+    }
   }
 
   void _Count() async {
@@ -149,6 +165,7 @@ class _MyWidgetState extends State<Home> {
 
   Widget build(BuildContext context) {
     // ignore: no_leading_underscores_for_local_identifiers
+
     List<Widget> _pages = <Widget>[
       Dashboard(terminalCount, userCount, driverCount),
       Padding(
@@ -280,15 +297,9 @@ class _MyWidgetState extends State<Home> {
     ];
     return Scaffold(
       appBar: AppBar(
-        actions: const <Widget>[
-          Image(
-            image: AssetImage('assets/logoforwhite.png'),
-            width: 50,
-            height: 50,
-          ), //IconButton
-        ], //<Widget>[]
-        backgroundColor: Colors.greenAccent[400],
-        elevation: 50.0,
+        title: Text(sreenName),
+        //<Widget>[]
+        backgroundColor: Color.fromARGB(255, 72, 206, 133),
       ),
       drawer: NavigationDrawer(),
       //AppBar
@@ -296,23 +307,22 @@ class _MyWidgetState extends State<Home> {
         child: _pages.elementAt(_selectedIndex), //New
       ),
       bottomNavigationBar: BottomNavigationBar(
-        backgroundColor: Colors.greenAccent[400],
-        selectedItemColor: Colors.white,
+        backgroundColor: Color.fromARGB(255, 72, 206, 133),
+        selectedItemColor: Color.fromARGB(255, 255, 255, 255),
         unselectedItemColor: Colors.white,
-        showSelectedLabels: false,
+        showSelectedLabels: true,
         showUnselectedLabels: false,
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
-            icon: Icon(Icons.home, color: Colors.white),
+            icon: Icon(Icons.home, size: 35.0),
             label: 'Home',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.gps_fixed_sharp, color: Colors.white),
+            icon: Icon(Icons.add_location_alt_outlined, size: 35.0),
             label: 'Add Terminal',
           ),
           BottomNavigationBarItem(
-              icon: Icon(Icons.list, color: Colors.white),
-              label: 'Terminal List'),
+              icon: Icon(Icons.list, size: 35.0), label: 'Terminal List'),
         ],
         currentIndex: _selectedIndex, //New
         onTap: _onItemTapped,
