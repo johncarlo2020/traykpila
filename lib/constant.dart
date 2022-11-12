@@ -110,108 +110,108 @@ Padding Dashboard(String Terminal, String User, String Driver) {
         Row(
           children: <Widget>[
             Expanded(
-              child: Container(
-                margin: const EdgeInsets.all(10.0),
-                width: 90.0,
-                height: 90.0,
-                // ignore: unnecessary_new
-                decoration: new BoxDecoration(
-                  borderRadius: BorderRadius.circular(6),
-                  color: const Color.fromRGBO(77, 206, 135, 1.0),
-                  border: Border.all(
-                      color: const Color.fromARGB(255, 255, 255, 255)),
-                  // ignore: prefer_const_literals_to_create_immutables
-                  boxShadow: [
-                    // BoxShadow(color: Colors.green, spreadRadius: 3),
-                  ],
-                ),
-                child: Row(
-                  children: [
-                    IconButton(
-                      icon: Image.asset('assets/pasenger.png'),
-                      style: TextButton.styleFrom(
-                        backgroundColor:
-                            const Color.fromRGBO(77, 206, 135, 1.0),
-                      ),
-                      onPressed: () {},
+                child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      minimumSize: Size(100, 100),
+                      backgroundColor: Color.fromARGB(255, 72, 206, 133),
                     ),
-                    const Spacer(),
-                    Column(
-                      children: [Text('Terminal'), Text(Terminal)],
-                    ),
-                  ],
-                ),
-              ),
-            ),
+                    onPressed: () {},
+                    child: Row(
+                      children: [
+                        Image(
+                          image: AssetImage('assets/mapIcon.png'),
+                          width: 50,
+                          height: 50,
+                        ),
+                        const Spacer(),
+                        Column(
+                          children: [
+                            Text('User',
+                                style: TextStyle(
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.bold,
+                                  color: Color.fromARGB(255, 255, 255, 255),
+                                )),
+                            Text(User,
+                                style: TextStyle(
+                                  fontSize: 40,
+                                  fontWeight: FontWeight.bold,
+                                  color: Color.fromARGB(255, 255, 255, 255),
+                                ))
+                          ],
+                        ),
+                      ],
+                    ))),
+            const SizedBox(width: 10),
             Expanded(
-              child: Container(
-                margin: const EdgeInsets.all(10.0),
-                width: 90.0,
-                height: 90.0,
-                // ignore: unnecessary_new
-                decoration: new BoxDecoration(
-                  borderRadius: BorderRadius.circular(6),
-                  color: const Color.fromRGBO(77, 206, 135, 1.0),
-                  border: Border.all(
-                      color: const Color.fromARGB(255, 255, 255, 255)),
-                  // ignore: prefer_const_literals_to_create_immutables
-                  boxShadow: [
-                    // BoxShadow(color: Colors.green, spreadRadius: 3),
-                  ],
-                ),
-                child: Row(
-                  children: [
-                    IconButton(
-                      icon: Image.asset('assets/pasenger.png'),
-                      style: TextButton.styleFrom(
-                        backgroundColor:
-                            const Color.fromRGBO(77, 206, 135, 1.0),
-                      ),
-                      onPressed: () {},
+                child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      minimumSize: Size(100, 100),
+                      backgroundColor: Color.fromARGB(255, 72, 206, 133),
                     ),
-                    const Spacer(),
-                    Column(
-                      children: [Text('User'), Text(User)],
-                    ),
-                  ],
-                ),
-              ),
-            ),
+                    onPressed: () {},
+                    child: Row(
+                      children: [
+                        Image(
+                          image: AssetImage('assets/personIconSquare.png'),
+                          width: 50,
+                          height: 50,
+                        ),
+                        const Spacer(),
+                        Column(
+                          children: [
+                            Text('Terminal',
+                                style: TextStyle(
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.bold,
+                                  color: Color.fromARGB(255, 255, 255, 255),
+                                )),
+                            Text(Terminal,
+                                style: TextStyle(
+                                  fontSize: 40,
+                                  fontWeight: FontWeight.bold,
+                                  color: Color.fromARGB(255, 255, 255, 255),
+                                ))
+                          ],
+                        ),
+                      ],
+                    )))
           ],
         ),
+        const SizedBox(height: 10),
         Expanded(
-          child: Container(
-            margin: const EdgeInsets.all(10.0),
-            width: 90.0,
-            height: 90.0,
-            // ignore: unnecessary_new
-            decoration: new BoxDecoration(
-              borderRadius: BorderRadius.circular(6),
-              color: const Color.fromRGBO(77, 206, 135, 1.0),
-              border:
-                  Border.all(color: const Color.fromARGB(255, 255, 255, 255)),
-              // ignore: prefer_const_literals_to_create_immutables
-              boxShadow: [
-                // BoxShadow(color: Colors.green, spreadRadius: 3),
-              ],
-            ),
-            child: Row(
-              children: [
-                IconButton(
-                  icon: Image.asset('assets/pasenger.png'),
-                  style: TextButton.styleFrom(
-                    backgroundColor: const Color.fromRGBO(77, 206, 135, 1.0),
-                  ),
-                  onPressed: () {},
+            child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  minimumSize: Size(100, 100),
+                  backgroundColor: Color.fromARGB(255, 72, 206, 133),
                 ),
-                const Spacer(),
-                Column(
-                  children: [Text('Driver'), Text(Driver)],
-                ),
-              ],
-            ),
-          ),
-        )
+                onPressed: () {},
+                child: Row(
+                  children: [
+                    Image(
+                      image: AssetImage('assets/car.png'),
+                      width: 50,
+                      height: 50,
+                    ),
+                    const Spacer(),
+                    Column(
+                      children: [
+                        Text('Driver',
+                            style: TextStyle(
+                              fontSize: 15,
+                              fontWeight: FontWeight.bold,
+                              color: Color.fromARGB(255, 255, 255, 255),
+                            )),
+                        Text(Driver,
+                            style: TextStyle(
+                              fontSize: 40,
+                              fontWeight: FontWeight.bold,
+                              color: Color.fromARGB(255, 255, 255, 255),
+                            ))
+                      ],
+                    ),
+                  ],
+                )))
       ],
     ),
   );
