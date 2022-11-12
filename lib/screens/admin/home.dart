@@ -94,13 +94,7 @@ class _MyWidgetState extends State<Home> {
           height: 150,
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          signOut();
-        },
-        child: Icon(Icons.logout_rounded),
-        backgroundColor: Colors.green,
-      ), //AppBar
+      //AppBar
       body: Center(
         child: _pages.elementAt(_selectedIndex), //New
       ),
