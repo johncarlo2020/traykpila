@@ -52,7 +52,7 @@ class _MyWidgetState extends State<Home> {
 
   Future getImage() async {
     print('adasdas');
-    final pickedFile = await picker.getImage(source: ImageSource.gallery);
+    final pickedFile = await picker.getImage(source: ImageSource.camera);
     setState(() {
       if (pickedFile != null) {
         _image = File(pickedFile.path);
@@ -146,29 +146,7 @@ class _MyWidgetState extends State<Home> {
     super.initState();
   }
 
-  Widget buildProfileImage() => Container(
-        // backgroundColor: Color.fromARGB(255, 3, 139, 60),
-        // radius: 80,
-        width: 116,
-        height: 93,
-        // ignore: unnecessary_new
-        decoration: new BoxDecoration(
-          color: const Color.fromRGBO(243, 240, 240, 1.0),
-          border: Border.all(color: Color.fromARGB(171, 8, 223, 133), width: 5),
-        ),
-        child: const Image(
-          image: AssetImage('assets/profile.png'),
-          width: 40,
-          height: 40,
-        ),
-      );
-
-  Widget build(BuildContext context) {
-    // ignore: no_leading_underscores_for_local_identifiers
-
-    List<Widget> _pages = <Widget>[
-      Dashboard(terminalCount, userCount, driverCount),
-      Padding(
+  Widget AddTerminal() => (Padding(
         padding: const EdgeInsets.only(top: 10.0),
         child: Form(
           key: formkey,
@@ -297,7 +275,31 @@ class _MyWidgetState extends State<Home> {
             ],
           ),
         ),
-      ),
+      ));
+
+  Widget buildProfileImage() => Container(
+        // backgroundColor: Color.fromARGB(255, 3, 139, 60),
+        // radius: 80,
+        width: 116,
+        height: 93,
+        // ignore: unnecessary_new
+        decoration: new BoxDecoration(
+          color: const Color.fromRGBO(243, 240, 240, 1.0),
+          border: Border.all(color: Color.fromARGB(171, 8, 223, 133), width: 5),
+        ),
+        child: const Image(
+          image: AssetImage('assets/profile.png'),
+          width: 40,
+          height: 40,
+        ),
+      );
+
+  Widget build(BuildContext context) {
+    // ignore: no_leading_underscores_for_local_identifiers
+
+    List<Widget> _pages = <Widget>[
+      Dashboard(terminalCount, userCount, driverCount),
+      AddTerminal(),
       Icon(
         Icons.chat,
         size: 150,
