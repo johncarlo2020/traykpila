@@ -15,6 +15,7 @@ const terminalCount = baseUrl + '/terminal/count';
 const userCount = baseUrl + '/user/count';
 const driverCount = baseUrl + '/driver/count';
 const terminalCreate = baseUrl + '/terminal/create';
+const terminalShow = baseUrl + '/terminal';
 
 const serverError = 'Server error';
 const unauthorized = 'Unauthorized';
