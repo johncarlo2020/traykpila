@@ -37,7 +37,7 @@ class _MyWidgetState extends State<Home> {
   late File _image;
   final picker = ImagePicker();
   var sreenName = 'Dashboard';
-
+  int imageClick = 0;
   bool loading = false;
   // ignore: non_constant_identifier_names
 
@@ -83,6 +83,7 @@ class _MyWidgetState extends State<Home> {
     setState(() {
       if (pickedFile != null) {
         _image = File(pickedFile.path);
+        imageClick = 1;
         print(_image.path);
       } else {
         print('No image selected.');
@@ -155,21 +156,49 @@ class _MyWidgetState extends State<Home> {
     );
   }
 
-  void _register() {
-    Map<String, String> body = {
-      'name': txtName.text,
-      'address': txtAdress.text,
-      'image': _image.path,
-      'lat': currentLocation!.latitude!.toString(),
-      'lng': currentLocation!.longitude!.toString(),
-    };
-    Future<bool> add = addImage(body, _image.path);
-    print(add);
+  Future<void> _register() async {
+    print(imageClick);
+    if (imageClick == 0) {
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text('Add image first')));
+    } else {
+      Map<String, String> body = {
+        'name': txtName.text,
+        'address': txtAdress.text,
+        'image': _image.path,
+        'lat': currentLocation!.latitude!.toString(),
+        'lng': currentLocation!.longitude!.toString(),
+      };
+
+      if (await addImage(body, _image.path) == false) {
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text('Server Error')));
+
+        Navigator.pushReplacement(context,
+            MaterialPageRoute(builder: (BuildContext context) => super.widget));
+      } else {
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text('Added Successfully')));
+
+        Navigator.pushReplacement(context,
+            MaterialPageRoute(builder: (BuildContext context) => super.widget));
+
+        clearAll();
+      }
+    }
+  }
+
+  void clearAll() {
+    imageClick = 0;
+    txtAdress.text = '';
+    txtName.text = '';
+    loading = false;
   }
 
   @override
   void initState() {
     _Count();
+    imageClick = 0;
     super.initState();
   }
 
@@ -278,11 +307,6 @@ class _MyWidgetState extends State<Home> {
                         if (formkey.currentState!.validate()) {
                           formkey.currentState!.save();
                           _register();
-                          Navigator.pushReplacement(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (BuildContext context) =>
-                                      super.widget));
                         }
                       },
                       style: ButtonStyle(
