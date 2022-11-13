@@ -147,6 +147,7 @@ class _MyWidgetState extends State<Home> {
     super.initState();
   }
 
+  // ignore: non_constant_identifier_names
   Widget AddTerminal() => (Padding(
         padding: const EdgeInsets.only(top: 10.0),
         child: Form(
