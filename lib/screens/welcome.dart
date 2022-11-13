@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/container.dart';
-import 'package:flutter/src/widgets/framework.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+// ignore: library_prefixes
 import 'package:traykpila/screens/register.dart' as registerPassenger;
-import 'package:traykpila/screens/driver/register.dart' as registerDriver;
 
 class Welcome extends StatefulWidget {
   const Welcome({super.key});
@@ -20,122 +18,125 @@ class _WelcomeState extends State<Welcome> {
     return Scaffold(
         body: Center(
       child: Container(
-        decoration: new BoxDecoration(color: Color.fromRGBO(37, 195, 108, 1.0)),
+        // ignore: prefer_const_constructors
+        decoration:
+            const BoxDecoration(color: Color.fromRGBO(37, 195, 108, 1.0)),
         height: MediaQuery.of(context).size.height,
         width: MediaQuery.of(context).size.width,
-        child: Center(
+        child: Padding(
+          padding: const EdgeInsets.only(top: 110.0),
           child: Container(
             alignment: Alignment.center,
-            height: MediaQuery.of(context).size.width * 0.85,
-            width: MediaQuery.of(context).size.width * 0.85,
             child: Column(
               children: <Widget>[
-                Row(
-                  children: const <Widget>[
-                    Expanded(
-                      child: Image(
-                        height: 70,
-                        image: AssetImage('assets/trayklogo.png'),
-                      ),
-                    )
-                  ],
+                const Image(
+                  height: 140,
+                  width: 140,
+                  image: AssetImage('assets/trayklogo.png'),
                 ),
-                Row(
-                  children: const <Widget>[
-                    Expanded(
-                        child: Text(
-                      'Welcome to TricPila',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                          fontSize: 35,
-                          fontWeight: FontWeight.bold,
-                          color: Color.fromRGBO(247, 242, 100, 1.0)),
-                    ))
-                  ],
+                const Text(
+                  'Welcome to TricPila',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                      fontSize: 35,
+                      fontWeight: FontWeight.bold,
+                      color: Color.fromRGBO(247, 242, 100, 1.0)),
                 ),
-                Row(
-                  children: const <Widget>[
-                    Expanded(
-                        child: Text(
-                      'Your nunber one tricycle booking App in the Philippines',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                          fontSize: 17,
-                          fontWeight: FontWeight.normal,
-                          color: Color.fromARGB(255, 255, 255, 255)),
-                    ))
-                  ],
+                const Text(
+                  'Your nunber one tricycle booking App in the Philippines',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                      fontSize: 17,
+                      fontWeight: FontWeight.normal,
+                      color: Color.fromARGB(255, 255, 255, 255)),
                 ),
+                const Divider(
+                  height: 20,
+                  thickness: 2,
+                  indent: 30,
+                  endIndent: 30,
+                  color: Color.fromRGBO(247, 242, 100, 1.0),
+                ),
+                const SizedBox(height: 40),
+                const Text(
+                  'Register as',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: Color.fromRGBO(247, 242, 100, 1.0)),
+                ),
+                const SizedBox(height: 20),
                 Wrap(
-                  spacing: 8.0, // gap between adjacent chips
+                  spacing: 20.0, // gap between adjacent chips
                   runSpacing: 4.0, // gap between lines
                   children: <Widget>[
-                    Expanded(
-                      child: Container(
-                        margin: const EdgeInsets.all(10.0),
-                        width: 90.0,
-                        height: 90.0,
-                        decoration: new BoxDecoration(
-                          borderRadius: BorderRadius.circular(6),
-                          color: Color.fromRGBO(77, 206, 135, 1.0),
-                          border: Border.all(
-                              color: Color.fromARGB(255, 255, 255, 255)),
-                          boxShadow: [
-                            // BoxShadow(color: Colors.green, spreadRadius: 3),
-                          ],
-                        ),
-                        child: IconButton(
-                          icon: Image.asset('assets/driver.png'),
-                          style: TextButton.styleFrom(
-                            backgroundColor: Color.fromRGBO(77, 206, 135, 1.0),
-                          ),
-                          onPressed: () async {
-                            SharedPreferences pref =
-                                await SharedPreferences.getInstance();
-                            await pref.setString('userRole', '1');
-                            print(1);
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) =>
-                                        registerPassenger.Register()));
-                          },
-                        ),
-                      ),
+                    Column(
+                      children: [
+                        ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              minimumSize: const Size(120, 120),
+                              backgroundColor:
+                                  const Color.fromARGB(255, 72, 206, 133),
+                            ),
+                            onPressed: () async {
+                              SharedPreferences pref =
+                                  await SharedPreferences.getInstance();
+                              await pref.setString('userRole', '1');
+                              // ignore: use_build_context_synchronously
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          const registerPassenger.Register()));
+                            },
+                            child: const Image(
+                              image: AssetImage('assets/driver.png'),
+                              width: 80,
+                              height: 80,
+                            )),
+                        const SizedBox(height: 8),
+                        const Text('Driver',
+                            style: TextStyle(
+                              fontSize: 15,
+                              fontWeight: FontWeight.normal,
+                              color: Color.fromARGB(255, 255, 255, 255),
+                            ))
+                      ],
                     ),
-                    Expanded(
-                      child: Container(
-                        margin: const EdgeInsets.all(10.0),
-                        width: 90.0,
-                        height: 90.0,
-                        decoration: new BoxDecoration(
-                          borderRadius: BorderRadius.circular(6),
-                          color: Color.fromRGBO(77, 206, 135, 1.0),
-                          border: Border.all(
-                              color: Color.fromARGB(255, 255, 255, 255)),
-                          boxShadow: [
-                            // BoxShadow(color: Colors.green, spreadRadius: 3),
-                          ],
-                        ),
-                        child: IconButton(
-                          icon: Image.asset('assets/pasenger.png'),
-                          style: TextButton.styleFrom(
-                            backgroundColor: Color.fromRGBO(77, 206, 135, 1.0),
-                          ),
-                          onPressed: () async {
-                            SharedPreferences pref =
-                                await SharedPreferences.getInstance();
-                            await pref.setString('userRole', '0');
-                            print(0);
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) =>
-                                        registerPassenger.Register()));
-                          },
-                        ),
-                      ),
-                    )
+                    Column(
+                      children: [
+                        ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              minimumSize: const Size(120, 120),
+                              backgroundColor:
+                                  const Color.fromARGB(255, 72, 206, 133),
+                            ),
+                            onPressed: () async {
+                              SharedPreferences pref =
+                                  await SharedPreferences.getInstance();
+                              await pref.setString('userRole', '0');
+                              // ignore: use_build_context_synchronously
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          const registerPassenger.Register()));
+                            },
+                            child: const Image(
+                              image: AssetImage('assets/pasenger.png'),
+                              width: 80,
+                              height: 80,
+                            )),
+                        const SizedBox(height: 8),
+                        const Text('Passenger',
+                            style: TextStyle(
+                              fontSize: 15,
+                              fontWeight: FontWeight.normal,
+                              color: Color.fromARGB(255, 255, 255, 255),
+                            ))
+                      ],
+                    ),
                   ],
                 )
               ],
