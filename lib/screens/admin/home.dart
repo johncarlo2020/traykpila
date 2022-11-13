@@ -6,6 +6,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
 import 'package:http/http.dart' as http;
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:traykpila/models/terminal.dart';
 
 import '../../constant.dart';
 import '../../services/user_service.dart';
@@ -50,6 +51,31 @@ class _MyWidgetState extends State<Home> {
   //   Navigator.of(context).pushAndRemoveUntil(
   //       MaterialPageRoute(builder: (context) => Login()), (route) => false);
   // }
+
+  Future<List<Terminal>> getTerminals() async {
+    String token = await getToken();
+
+    final response = await http.post(Uri.parse(terminalShow), headers: {
+      'Accept': 'application/json',
+      'Authorization': 'Bearer $token'
+    });
+
+    var jsonData = jsonDecode(response.body);
+    var jsonArray = jsonData['terminals'];
+    List<Terminal> terminals = [];
+
+    for (var jsonTerminal in jsonArray) {
+      Terminal terminal = Terminal(
+          id: jsonTerminal['id'],
+          name: jsonTerminal['name'],
+          address: jsonTerminal['address'],
+          image: jsonTerminal['image'],
+          lat: jsonTerminal['lat'],
+          lng: jsonTerminal['lng']);
+      terminals.add(terminal);
+    }
+    return terminals;
+  }
 
   Future getImage() async {
     print('adasdas');
@@ -325,34 +351,35 @@ class _MyWidgetState extends State<Home> {
                 color: Color.fromARGB(255, 49, 241, 129),
               ),
               Expanded(
-                  child: ListView(
-                children: const <Widget>[
-                  Card(
-                    child: ListTile(
-                      leading: Icon(
-                        Icons.map,
-                        size: 30.0,
-                        color: Color.fromARGB(255, 72, 206, 133),
-                      ),
-                      title: Text('Terminal name'),
-                      subtitle: Text('Driver count'),
-                      trailing: Text('view'),
-                    ),
-                  ),
-                  Card(
-                    child: ListTile(
-                      leading: Icon(
-                        Icons.map,
-                        size: 30.0,
-                        color: Color.fromARGB(255, 72, 206, 133),
-                      ),
-                      title: Text('Terminal name'),
-                      subtitle: Text('Driver count'),
-                      trailing: Text('view'),
-                    ),
-                  )
-                ],
-              ))
+                child: FutureBuilder<List<Terminal>>(
+                    future: getTerminals(),
+                    builder: (context, snapshot) {
+                      if (snapshot.data == null) {
+                        return Center(
+                          child: CircularProgressIndicator(),
+                        );
+                      } else {
+                        List<Terminal> terminals = snapshot.data!;
+                        return ListView.builder(
+                            itemCount: terminals.length,
+                            itemBuilder: (context, index) {
+                              Terminal terminal = terminals[index];
+                              return Card(
+                                child: ListTile(
+                                  leading: Icon(
+                                    Icons.map,
+                                    size: 30.0,
+                                    color: Color.fromARGB(255, 72, 206, 133),
+                                  ),
+                                  title: Text(terminal.name.toString()),
+                                  subtitle: Text(terminal.address.toString()),
+                                  trailing: Text('view'),
+                                ),
+                              );
+                            });
+                      }
+                    }),
+              )
             ],
           )),
         ),

@@ -1,11 +1,21 @@
-class TerminalCount {
-  String? count;
+class Terminal {
+  int? id;
+  String? name;
+  String? address;
+  String? image;
+  String? lat;
+  String? lng;
 
-  TerminalCount({this.count});
+  Terminal({this.id, this.name, this.address, this.image, this.lat, this.lng});
 
-  factory TerminalCount.fromJson(Map<String, dynamic> json) {
-    return TerminalCount(
-      count: json['count'],
+  factory Terminal.fromJson(Map<String, dynamic> json) {
+    return Terminal(
+      id: json['id'],
+      name: json['name'],
+      address: json['address'],
+      image: json['address'],
+      lat: json['lat'],
+      lng: json['lng'],
     );
   }
 }
