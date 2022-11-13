@@ -3,8 +3,8 @@
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
-const baseUrl = 'http://192.168.100.84/traykpila-api/public/api';
-// const baseUrl = 'http://192.168.1.13/traykpila-api/public/api';
+// const baseUrl = 'http://192.168.100.84/traykpila-api/public/api';
+const baseUrl = 'http://192.168.1.13/traykpila-api/public/api';
 const loginUrl = baseUrl + '/login';
 const registerUrl = baseUrl + '/register';
 const logoutUrl = baseUrl + '/logout';
@@ -191,8 +191,8 @@ Padding Dashboard(String Terminal, String User, String Driver) {
                   children: [
                     Image(
                       image: AssetImage('assets/car.png'),
-                      width: 50,
-                      height: 50,
+                      width: 70,
+                      height: 70,
                     ),
                     const Spacer(),
                     Column(
