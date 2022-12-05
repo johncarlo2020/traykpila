@@ -3,6 +3,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 // ignore: library_prefixes
 import 'package:traykpila/screens/register.dart' as registerPassenger;
 
+import '../constant.dart';
+import 'login.dart';
+
 class Welcome extends StatefulWidget {
   const Welcome({super.key});
 
@@ -141,6 +144,26 @@ class _WelcomeState extends State<Welcome> {
                               ))
                         ],
                       ),
+                    ],
+                  ),
+                  const SizedBox(height: 150),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Text('Already have an Account? ',
+                          style: TextStyle(
+                              color: Color.fromARGB(255, 255, 255, 255))),
+                      GestureDetector(
+                        child: const Text('Login',
+                            style: TextStyle(
+                                color: Color.fromRGBO(247, 242, 100, 1.0))),
+                        onTap: () {
+                          Navigator.of(context).pushAndRemoveUntil(
+                              MaterialPageRoute(
+                                  builder: (context) => const Login()),
+                              (route) => false);
+                        },
+                      )
                     ],
                   )
                 ],

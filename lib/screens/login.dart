@@ -4,6 +4,7 @@ import 'package:shared_preferences/shared_preferences.dart'
 import 'package:traykpila/constant.dart';
 import 'package:traykpila/models/api.response.dart';
 import 'package:traykpila/screens/register.dart';
+import 'package:traykpila/screens/welcome.dart';
 import 'package:traykpila/services/user_service.dart';
 
 import '../models/user.dart';
@@ -84,6 +85,19 @@ class _LoginState extends State<Login> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () {
+            Navigator.of(context).pushAndRemoveUntil(
+                MaterialPageRoute(builder: (context) => const Welcome()),
+                (route) => false);
+          },
+        ),
+        title: const Text('Login'),
+        //<Widget>[]
+        backgroundColor: const Color.fromARGB(255, 72, 206, 133),
+      ),
       body: Padding(
         padding: const EdgeInsets.only(top: 70.0),
         child: Form(
@@ -128,7 +142,14 @@ class _LoginState extends State<Login> {
                 decoration: const InputDecoration(
                     isDense: true,
                     labelText: 'Email',
-                    border: InputBorder.none,
+                    border: OutlineInputBorder(
+                      borderSide: BorderSide(
+                          width: 1, color: Colors.greenAccent), //<-- SEE HERE
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderSide: BorderSide(
+                          width: 1, color: Colors.greenAccent), //<-- SEE HERE
+                    ),
                     filled: true,
                     fillColor: Color.fromRGBO(229, 255, 238, 1.0),
                     prefixIcon: Icon(
@@ -145,7 +166,14 @@ class _LoginState extends State<Login> {
                 decoration: const InputDecoration(
                     isDense: true,
                     labelText: 'Password',
-                    border: InputBorder.none,
+                    border: OutlineInputBorder(
+                      borderSide: BorderSide(
+                          width: 1, color: Colors.greenAccent), //<-- SEE HERE
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderSide: BorderSide(
+                          width: 1, color: Colors.greenAccent), //<-- SEE HERE
+                    ),
                     filled: true,
                     fillColor: Color.fromRGBO(229, 255, 238, 1.0),
                     prefixIcon: Icon(
@@ -170,7 +198,7 @@ class _LoginState extends State<Login> {
                         child: const Text("Forgot Password",
                             textAlign: TextAlign.right,
                             style: TextStyle(
-                              fontSize: 12,
+                              fontSize: 14,
                               fontWeight: FontWeight.bold,
                               color: Color.fromARGB(255, 5, 110, 31),
                             )),
@@ -208,7 +236,7 @@ class _LoginState extends State<Login> {
                                 )),
                           )),
                     ),
-              const SizedBox(height: 10),
+              const SizedBox(height: 20),
               kLoinRegisterhint('Dont have an account? ', 'Register', () async {
                 Navigator.of(context).pushAndRemoveUntil(
                     MaterialPageRoute(builder: (context) => Register()),
