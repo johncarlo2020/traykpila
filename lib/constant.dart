@@ -7,15 +7,21 @@ import 'package:image_picker/image_picker.dart';
 // const baseUrl = 'http://192.168.1.13/traykpila-api/public/api';
 const loginUrl = baseUrl + '/login';
 const registerUrl = baseUrl + '/register';
+const registerUrlNew = baseUrl + '/register_new';
+
 const logoutUrl = baseUrl + '/logout';
 const userUrl = baseUrl + '/user';
 
-//terminal api
+//tricycle api
 const terminalCount = baseUrl + '/terminal/count';
 const userCount = baseUrl + '/user/count';
 const driverCount = baseUrl + '/driver/count';
 const terminalCreate = baseUrl + '/terminal/create';
 const terminalShow = baseUrl + '/terminal';
+
+//tricycle api
+const tricycleCreate = baseUrl + '/tricyle/create';
+const tricycleShow = baseUrl + '/tricycle';
 
 const serverError = 'Server error';
 const unauthorized = 'Unauthorized';

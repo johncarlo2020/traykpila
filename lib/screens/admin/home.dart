@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
 import 'package:http/http.dart' as http;
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:traykpila/models/terminal.dart';
 
 import '../../constant.dart';
@@ -14,7 +13,6 @@ import '../login.dart';
 
 import 'dart:io';
 import 'package:image_picker/image_picker.dart';
-
 import 'package:geolocator/geolocator.dart';
 
 class Home extends StatefulWidget {
@@ -29,6 +27,7 @@ class _MyWidgetState extends State<Home> {
   TextEditingController txtName = TextEditingController();
   TextEditingController txtAdress = TextEditingController();
 
+  // ignore: unused_field
   final Completer<GoogleMapController> _controller = Completer();
   late String terminalCount = '';
   late String userCount = '';
@@ -371,7 +370,7 @@ class _MyWidgetState extends State<Home> {
                     future: getTerminals(),
                     builder: (context, snapshot) {
                       if (snapshot.data == null) {
-                        return Center(
+                        return const Center(
                           child: CircularProgressIndicator(),
                         );
                       } else {
@@ -382,7 +381,7 @@ class _MyWidgetState extends State<Home> {
                               Terminal terminal = terminals[index];
                               return Card(
                                 child: ListTile(
-                                  leading: Icon(
+                                  leading: const Icon(
                                     Icons.map,
                                     size: 30.0,
                                     color: Color.fromARGB(255, 72, 206, 133),
@@ -405,7 +404,7 @@ class _MyWidgetState extends State<Home> {
         ),
       );
 
-  Widget TerminalView() => Text(
+  Widget TerminalView() => const Text(
         'Register',
         textAlign: TextAlign.center,
         style: TextStyle(
@@ -414,9 +413,11 @@ class _MyWidgetState extends State<Home> {
           color: Color.fromARGB(255, 25, 154, 90),
         ),
       );
+  @override
   Widget build(BuildContext context) {
     // ignore: no_leading_underscores_for_local_identifiers
 
+    // ignore: no_leading_underscores_for_local_identifiers
     List<Widget> _pages = <Widget>[
       Dashboard(terminalCount, userCount, driverCount),
       AddTerminal(),
@@ -428,16 +429,16 @@ class _MyWidgetState extends State<Home> {
       appBar: AppBar(
         title: Text(sreenName),
         //<Widget>[]
-        backgroundColor: Color.fromARGB(255, 72, 206, 133),
+        backgroundColor: const Color.fromARGB(255, 72, 206, 133),
       ),
-      drawer: NavigationDrawer(),
+      drawer: const NavigationDrawer(),
       //AppBar
       body: Center(
         child: _pages.elementAt(_selectedIndex), //New
       ),
       bottomNavigationBar: BottomNavigationBar(
-        backgroundColor: Color.fromARGB(255, 72, 206, 133),
-        selectedItemColor: Color.fromARGB(255, 255, 255, 255),
+        backgroundColor: const Color.fromARGB(255, 72, 206, 133),
+        selectedItemColor: const Color.fromARGB(255, 255, 255, 255),
         unselectedItemColor: Colors.white,
         showSelectedLabels: true,
         showUnselectedLabels: false,
@@ -478,7 +479,7 @@ class NavigationDrawer extends StatelessWidget {
                     await logout();
                     // ignore: use_build_context_synchronously
                     Navigator.of(context).pushAndRemoveUntil(
-                        MaterialPageRoute(builder: (context) => Login()),
+                        MaterialPageRoute(builder: (context) => const Login()),
                         (route) => false);
                   }),
               ListTile(
@@ -488,7 +489,7 @@ class NavigationDrawer extends StatelessWidget {
                     await logout();
                     // ignore: use_build_context_synchronously
                     Navigator.of(context).pushAndRemoveUntil(
-                        MaterialPageRoute(builder: (context) => Login()),
+                        MaterialPageRoute(builder: (context) =>const Login()),
                         (route) => false);
                   }),
               ListTile(
@@ -498,7 +499,7 @@ class NavigationDrawer extends StatelessWidget {
                     await logout();
                     // ignore: use_build_context_synchronously
                     Navigator.of(context).pushAndRemoveUntil(
-                        MaterialPageRoute(builder: (context) => Login()),
+                        MaterialPageRoute(builder: (context) =>const Login()),
                         (route) => false);
                   }),
               ListTile(
@@ -508,7 +509,7 @@ class NavigationDrawer extends StatelessWidget {
                     await logout();
                     // ignore: use_build_context_synchronously
                     Navigator.of(context).pushAndRemoveUntil(
-                        MaterialPageRoute(builder: (context) => Login()),
+                        MaterialPageRoute(builder: (context) =>const Login()),
                         (route) => false);
                   }),
             ],

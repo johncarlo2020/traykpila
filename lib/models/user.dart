@@ -24,12 +24,9 @@ class User {
       name:json['user']['name'],
       email:json['user']['email'],
       token:json['token'],
-     address:json['user']['address'],
-     role:json['user']['role'],
-     image:json['user']['image'],
-
-
-
+      address:json['user']['address'],
+      role:json['user']['role'],
+      image:json['user']['image'],
     );
   }
 }

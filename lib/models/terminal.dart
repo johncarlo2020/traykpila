@@ -13,7 +13,7 @@ class Terminal {
       id: json['id'],
       name: json['name'],
       address: json['address'],
-      image: json['address'],
+      image: json['image'],
       lat: json['lat'],
       lng: json['lng'],
     );
