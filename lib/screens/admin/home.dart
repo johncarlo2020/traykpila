@@ -16,7 +16,6 @@ import 'dart:io';
 import 'package:image_picker/image_picker.dart';
 
 import 'package:geolocator/geolocator.dart';
-import 'package:geocoder/geocoder.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -46,12 +45,6 @@ class _MyWidgetState extends State<Home> {
 
   int _selectedIndex = 0;
 
-  // signOut() async {
-  //   await logout();
-  //   Navigator.of(context).pushAndRemoveUntil(
-  //       MaterialPageRoute(builder: (context) => Login()), (route) => false);
-  // }
-
   Future<List<Terminal>> getTerminals() async {
     String token = await getToken();
 
@@ -78,8 +71,7 @@ class _MyWidgetState extends State<Home> {
   }
 
   Future getImage() async {
-    print('adasdas');
-    final pickedFile = await picker.getImage(source: ImageSource.camera);
+    final pickedFile = await picker.pickImage(source: ImageSource.camera);
     setState(() {
       if (pickedFile != null) {
         _image = File(pickedFile.path);
@@ -398,6 +390,10 @@ class _MyWidgetState extends State<Home> {
                                   title: Text(terminal.name.toString()),
                                   subtitle: Text(terminal.address.toString()),
                                   trailing: Text('view'),
+                                  onTap: () {
+                                    _onItemTapped(3);
+                                  },
+                                  //  onTap: ,
                                 ),
                               );
                             });
@@ -408,6 +404,16 @@ class _MyWidgetState extends State<Home> {
           )),
         ),
       );
+
+  Widget TerminalView() => Text(
+        'Register',
+        textAlign: TextAlign.center,
+        style: TextStyle(
+          fontSize: 30,
+          fontWeight: FontWeight.bold,
+          color: Color.fromARGB(255, 25, 154, 90),
+        ),
+      );
   Widget build(BuildContext context) {
     // ignore: no_leading_underscores_for_local_identifiers
 
@@ -415,7 +421,9 @@ class _MyWidgetState extends State<Home> {
       Dashboard(terminalCount, userCount, driverCount),
       AddTerminal(),
       TerminalList(),
+      TerminalView()
     ];
+
     return Scaffold(
       appBar: AppBar(
         title: Text(sreenName),
