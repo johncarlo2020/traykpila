@@ -11,9 +11,13 @@ import 'package:location/location.dart';
 import 'package:http/http.dart' as http;
 
 import '../../constant.dart';
+import '../../models/api.response.dart';
 import '../../services/user_service.dart';
 import '../login.dart';
 import 'package:traykpila/models/terminal.dart';
+import '../../models/user.dart';
+import '../../constant.dart';
+
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -25,9 +29,16 @@ class Home extends StatefulWidget {
 class _MyWidgetState extends State<Home> {
   final Completer<GoogleMapController> _controller = Completer();
   bool loading = false;
+   User? user;
 
   List<LatLng> polylineCoordinates = [];
   LocationData? currentLocation;
+  
+  String currentTerminal = '';
+  String username = '';
+  String image='';
+  
+
 
   Future<List<Terminal>> getTerminals() async {
     String token = await getToken();
@@ -74,9 +85,33 @@ class _MyWidgetState extends State<Home> {
     );
   }
 
+  void getUser() async {
+    ApiResponse response = await getUserDetail();
+    if(response.error == null) {
+      setState(() {
+        user = response.data as User;
+        loading = false;
+        username = user!.name ?? '';
+        String userimage = user!.image ?? '';
+        image = imageBaseUrl+userimage;
+
+      });
+    }
+    else if(response.error == unauthorized){
+      logout().then((value) => {
+        Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context)=>Login()), (route) => false)
+      });
+    }
+    else {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text('${response.error}')
+      ));
+    }
+  }
   @override
   void initState() {
     loading = true;
+    getUser();
     getCurrentLocation();
     super.initState();
   }
@@ -104,11 +139,12 @@ class _MyWidgetState extends State<Home> {
                     children: [
                       ClipRRect(
                         borderRadius: BorderRadius.circular(10.0),
-                        child: const Image(
-                          height: 70,
+                        child:Image.network(
+                          image,
                           width: 70,
-                          image: AssetImage('assets/profilepic.png'),
-                        ),
+                          height: 70,
+                          fit: BoxFit.cover,
+                          )
                       ),
                       Container(
                           padding: const EdgeInsets.only(left: 10.0, top: 30),
@@ -116,8 +152,8 @@ class _MyWidgetState extends State<Home> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              const Text(
-                                'Julious Babaw',
+                               Text(
+                                username,
                                 textAlign: TextAlign.left,
                                 style: TextStyle(
                                     fontWeight: FontWeight.bold,
@@ -212,7 +248,7 @@ class _MyWidgetState extends State<Home> {
                           fontSize: 13,
                           fontWeight: FontWeight.bold,
                           color: Color.fromARGB(255, 79, 255, 40))),
-                  subtitle: Text('6th St. TODA (GREEN TRICYCLE TERMINAL)',
+                  subtitle: Text( currentTerminal ,
                       style: TextStyle(
                           fontSize: 13,
                           color: Color.fromARGB(255, 255, 255, 255))),
@@ -238,92 +274,35 @@ class _MyWidgetState extends State<Home> {
                               color: Color.fromARGB(255, 65, 220, 135),
                             ),
                             Expanded(
-                              child: SizedBox(
-                                child: ListView(
-                                  children: [
-                                    Card(
+                              child: FutureBuilder<List<Terminal>>(
+                    future: getTerminals(),
+                    builder: (context, snapshot) {
+                      if (snapshot.data == null) {
+                        return const Center(
+                          child: CircularProgressIndicator(),
+                        );
+                      } else {
+                        List<Terminal> terminals = snapshot.data!;
+                        return ListView.builder(
+                            itemCount: terminals.length,
+                            itemBuilder: (context, index) {
+                              Terminal terminal = terminals[index];
+                              String terminalName = terminal.address.toString() + '('+ terminal.name.toString() + ')' ;
+                              return  Card(
                                       child: ListTile(
                                           leading: FlutterLogo(),
-                                          title: Text(
-                                              'One-line with trailing widget'),
+                                          title:  Text(terminalName),
                                           trailing: Icon(Icons.more_vert),
                                           onTap: () {
+                                            setState(() {
+                                             currentTerminal = terminalName;
+                                            });
                                             Navigator.pop(context);
                                           }),
-                                    ),
-                                    Card(
-                                      child: ListTile(
-                                          leading: FlutterLogo(),
-                                          title: Text(
-                                              'One-line with trailing widget'),
-                                          trailing: Icon(Icons.more_vert),
-                                          onTap: () {
-                                            Navigator.pop(context);
-                                          }),
-                                    ),
-                                    Card(
-                                      child: ListTile(
-                                          leading: FlutterLogo(),
-                                          title: Text(
-                                              'One-line with trailing widget'),
-                                          trailing: Icon(Icons.more_vert),
-                                          onTap: () {
-                                            Navigator.pop(context);
-                                          }),
-                                    ),
-                                    Card(
-                                      child: ListTile(
-                                          leading: FlutterLogo(),
-                                          title: Text(
-                                              'One-line with trailing widget'),
-                                          trailing: Icon(Icons.more_vert),
-                                          onTap: () {
-                                            Navigator.pop(context);
-                                          }),
-                                    ),
-                                    Card(
-                                      child: ListTile(
-                                          leading: FlutterLogo(),
-                                          title: Text(
-                                              'One-line with trailing widget'),
-                                          trailing: Icon(Icons.more_vert),
-                                          onTap: () {
-                                            Navigator.pop(context);
-                                          }),
-                                    ),
-                                    Card(
-                                      child: ListTile(
-                                          leading: FlutterLogo(),
-                                          title: Text(
-                                              'One-line with trailing widget'),
-                                          trailing: Icon(Icons.more_vert),
-                                          onTap: () {
-                                            Navigator.pop(context);
-                                          }),
-                                    ),
-                                    Card(
-                                      child: ListTile(
-                                          leading: FlutterLogo(),
-                                          title: Text(
-                                              'One-line with trailing widget'),
-                                          trailing: Icon(Icons.more_vert),
-                                          onTap: () {
-                                            Navigator.pop(context);
-                                          }),
-                                    ),
-                                    Card(
-                                      child: ListTile(
-                                          leading: FlutterLogo(),
-                                          title: Text(
-                                              'One-line with trailing widget'),
-                                          trailing: Icon(Icons.more_vert),
-                                          onTap: () {
-                                            Navigator.pop(context);
-                                          }),
-                                    )
-                                  ],
-                                ),
-                              ),
+                                    );
+                            });
+                      }
+                    }),
                             ),
                           ],
                         );
