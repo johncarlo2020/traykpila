@@ -38,6 +38,7 @@ class _MyWidgetState extends State<Home> {
   String currentTerminal = '';
   String username = '';
   String image='';
+  String email='';
   
 
 
@@ -93,6 +94,7 @@ class _MyWidgetState extends State<Home> {
         user = response.data as User;
         loading = false;
         username = user!.name ?? '';
+        email = user!.email ??'';
         String userimage = user!.image ?? '';
         image = imageBaseUrl+userimage;
 
@@ -159,6 +161,14 @@ class _MyWidgetState extends State<Home> {
                                 style: TextStyle(
                                     fontWeight: FontWeight.bold,
                                     fontSize: 16,
+                                    color: Color.fromARGB(255, 14, 14, 13)),
+                              ),
+                              Text(
+                                email,
+                                textAlign: TextAlign.left,
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 12,
                                     color: Color.fromARGB(255, 14, 14, 13)),
                               ),
                               Wrap(

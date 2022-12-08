@@ -90,7 +90,9 @@ class _RegisterState extends State<Register> {
                 style: TextButton.styleFrom(
                   textStyle: const TextStyle(fontSize: 20),
                 ),
-                onPressed: () {},
+                onPressed: () {
+                  getImage();
+                },
                 child: const Text('Add Photo',
                     style: TextStyle(
                         fontWeight: FontWeight.w500,
