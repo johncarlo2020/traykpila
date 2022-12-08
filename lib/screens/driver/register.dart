@@ -240,13 +240,14 @@ class NavigationDrawer extends StatelessWidget {
                         (route) => false);
                   }),
               ListTile(
-                  leading: const Icon(Icons.logout),
-                  title: const Text('Log-out'),
+                  leading: const Icon(Icons.home),
+                  title: const Text('Home'),
                   onTap: () async {
                     await logout();
                     // ignore: use_build_context_synchronously
                     Navigator.of(context).pushAndRemoveUntil(
-                        MaterialPageRoute(builder: (context) => Login()),
+                        MaterialPageRoute(
+                            builder: (context) => passengerHome.Home()),
                         (route) => false);
                   }),
               ListTile(
