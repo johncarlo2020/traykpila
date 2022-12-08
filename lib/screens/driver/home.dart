@@ -13,6 +13,7 @@ import 'package:http/http.dart' as http;
 import '../../constant.dart';
 import '../../services/user_service.dart';
 import '../login.dart';
+import 'register.dart';
 import 'package:traykpila/models/terminal.dart';
 
 class Home extends StatefulWidget {
@@ -1389,13 +1390,13 @@ class NavigationDrawer extends StatelessWidget {
             runSpacing: 16,
             children: <Widget>[
               ListTile(
-                  leading: const Icon(Icons.logout),
-                  title: const Text('Log-out'),
+                  leading: const Icon(Icons.star),
+                  title: const Text('Vihicle'),
                   onTap: () async {
                     await logout();
                     // ignore: use_build_context_synchronously
                     Navigator.of(context).pushAndRemoveUntil(
-                        MaterialPageRoute(builder: (context) => Login()),
+                        MaterialPageRoute(builder: (context) => Register()),
                         (route) => false);
                   }),
               ListTile(
