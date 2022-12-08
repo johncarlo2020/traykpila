@@ -27,6 +27,23 @@ Future<bool> addImage(Map<String, String> body, String filepath) async {
   }
 }
 
+Future<bool> addTricycle(Map<String, String> body, String filepath) async {
+  Map<String, String> headers = {
+    'Content-Type': 'multipart/form-data',
+  };
+  var request = http.MultipartRequest('POST', Uri.parse(tricycleCreate))
+    ..fields.addAll(body)
+    ..headers.addAll(headers)
+    ..files.add(await http.MultipartFile.fromPath('image', filepath));
+  var response = await request.send();
+  print(response.statusCode);
+  if (response.statusCode == 201) {
+    return true;
+  } else {
+    return false;
+  }
+}
+
 Future<ApiResponse> login(String email, String password) async {
   ApiResponse apiResponse = ApiResponse();
 
@@ -51,11 +68,10 @@ Future<ApiResponse> login(String email, String password) async {
     }
   } catch (e) {
     apiResponse.error = serverError;
-    print(e.toString());
   }
-
   return apiResponse;
 }
+
 
 // ignore: non_constant_identifier_names
 Future<ApiResponse> register(String name, String email, String password,
@@ -83,9 +99,7 @@ Future<ApiResponse> register(String name, String email, String password,
         break;
       default:
         final errors = jsonDecode(response.body);
-
         apiResponse.error = somethingWentWrong;
-
         break;
     }
   } catch (e) {
