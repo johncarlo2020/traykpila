@@ -19,7 +19,6 @@ import 'package:traykpila/models/terminal.dart';
 import '../../models/user.dart';
 import '../../constant.dart';
 
-
 class Home extends StatefulWidget {
   const Home({super.key});
 
@@ -30,17 +29,15 @@ class Home extends StatefulWidget {
 class _MyWidgetState extends State<Home> {
   final Completer<GoogleMapController> _controller = Completer();
   bool loading = false;
-   User? user;
+  User? user;
 
   List<LatLng> polylineCoordinates = [];
   LocationData? currentLocation;
-  
+
   String currentTerminal = '';
   String username = '';
-  String image='';
-  String email='';
-  
-
+  String image = '';
+  String email = '';
 
   Future<List<Terminal>> getTerminals() async {
     String token = await getToken();
@@ -89,33 +86,32 @@ class _MyWidgetState extends State<Home> {
 
   void getUser() async {
     ApiResponse response = await getUserDetail();
-    if(response.error == null) {
+    if (response.error == null) {
       setState(() {
         user = response.data as User;
         loading = false;
         username = user!.name ?? '';
-        email = user!.email ??'';
+        email = user!.email ?? '';
         String userimage = user!.image ?? '';
-        if(userimage==''){
-        image=imageBaseUrl+'images/driver.png';
-        }else{
-        image = imageBaseUrl+userimage;
+        if (userimage == '') {
+          image = imageBaseUrl + 'images/driver.png';
+        } else {
+          image = imageBaseUrl + userimage;
         }
         print(image);
-
       });
-    }
-    else if(response.error == unauthorized){
+    } else if (response.error == unauthorized) {
       logout().then((value) => {
-        Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context)=>Login()), (route) => false)
-      });
-    }
-    else {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text('${response.error}')
-      ));
+            Navigator.of(context).pushAndRemoveUntil(
+                MaterialPageRoute(builder: (context) => Login()),
+                (route) => false)
+          });
+    } else {
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text('${response.error}')));
     }
   }
+
   @override
   void initState() {
     loading = true;
@@ -128,12 +124,63 @@ class _MyWidgetState extends State<Home> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-            backgroundColor: Color.fromRGBO(37, 195, 108, 1.0),
-            title: const Text(
-              "Dashboard",
-              style: TextStyle(
-                  color: Color.fromARGB(255, 255, 255, 255), fontSize: 16),
-            )),
+          backgroundColor: Color.fromRGBO(37, 195, 108, 1.0),
+          title: const Text(
+            "Dashboard",
+            style: TextStyle(
+                color: Color.fromARGB(255, 255, 255, 255), fontSize: 16),
+          ),
+          actions: <Widget>[
+            TextButton.icon(
+              // <-- TextButton
+              onPressed: () => showDialog<String>(
+                context: context,
+                builder: (BuildContext context) => AlertDialog(
+                  title: const Text('Status'),
+                  content: SingleChildScrollView(
+                    child: Column(
+                      children: [
+                        TextButton.icon(
+                          onPressed: () => Navigator.pop(context, 'OK'),
+                          style: TextButton.styleFrom(
+                            primary: Color.fromARGB(255, 47, 179, 65),
+                            // Background Color
+                          ),
+                          icon: Icon(
+                            Icons.check_circle,
+                            size: 24.0,
+                          ),
+                          label: Text('Active'),
+                        ),
+                        TextButton.icon(
+                          onPressed: () => Navigator.pop(context, 'OK'),
+                          style: TextButton.styleFrom(
+                            primary: Color.fromARGB(255, 47, 179, 65),
+                            // Background Color
+                          ),
+                          icon: Icon(
+                            Icons.check_circle,
+                            size: 24.0,
+                          ),
+                          label: Text('Active'),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+              style: TextButton.styleFrom(
+                primary: Color.fromARGB(255, 255, 255, 255),
+                // Background Color
+              ),
+              icon: Icon(
+                Icons.check_circle,
+                size: 24.0,
+              ),
+              label: Text('Active'),
+            ),
+          ],
+        ),
         drawer: NavigationDrawer(),
         body: (Column(
           children: [
@@ -146,21 +193,20 @@ class _MyWidgetState extends State<Home> {
                   Row(
                     children: [
                       ClipRRect(
-                        borderRadius: BorderRadius.circular(10.0),
-                        child:Image.network(
-                          image, 
-                          width: 70,
-                          height: 70,
-                          fit: BoxFit.cover,
-                          )
-                      ),
+                          borderRadius: BorderRadius.circular(10.0),
+                          child: Image.network(
+                            image,
+                            width: 70,
+                            height: 70,
+                            fit: BoxFit.cover,
+                          )),
                       Container(
                           padding: const EdgeInsets.only(left: 10.0, top: 30),
                           alignment: Alignment.bottomRight,
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                               Text(
+                              Text(
                                 username,
                                 textAlign: TextAlign.left,
                                 style: TextStyle(
@@ -200,14 +246,100 @@ class _MyWidgetState extends State<Home> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.end,
                         children: [
-                          ClipRRect(
-                            borderRadius: BorderRadius.circular(10.0),
-                            child: const Image(
-                              height: 50,
-                              width: 50,
-                              image: AssetImage('assets/profilepic.png'),
-                            ),
-                          ),
+                          InkWell(
+                              child: Container(
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(10.0),
+                                  child: const Image(
+                                    height: 50,
+                                    width: 50,
+                                    image: AssetImage('assets/profilepic.png'),
+                                  ),
+                                ),
+                              ),
+                              onTap: () {
+                                showModalBottomSheet<void>(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return Column(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Container(
+                                            padding: const EdgeInsets.all(20.0),
+                                            child: const Text("Tricycle List",
+                                                style: TextStyle(
+                                                    fontSize: 20,
+                                                    fontWeight: FontWeight.bold,
+                                                    color: Color.fromARGB(
+                                                        255, 0, 0, 0)))),
+                                        const Divider(
+                                          height: 1,
+                                          thickness: 1,
+                                          indent: 10,
+                                          endIndent: 10,
+                                          color:
+                                              Color.fromARGB(255, 65, 220, 135),
+                                        ),
+                                        Expanded(
+                                            child: ListView(
+                                          physics:
+                                              const AlwaysScrollableScrollPhysics(),
+                                          padding: EdgeInsets.all(16.0),
+                                          shrinkWrap: true,
+                                          children: <Widget>[
+                                            Container(
+                                              width: double.infinity,
+                                              padding: EdgeInsets.all(16.0),
+                                              decoration: BoxDecoration(
+                                                  border: Border.all(
+                                                      color:
+                                                          Colors.blueAccent)),
+                                              child: Row(
+                                                children: [
+                                                  Image(
+                                                      image: AssetImage(
+                                                          'assets/profilepic.png')),
+                                                  SizedBox(
+                                                    width: 10,
+                                                  ),
+                                                  Container(
+                                                    child: Column(
+                                                      children: [
+                                                        Text(
+                                                          'Plate Number',
+                                                          textAlign:
+                                                              TextAlign.left,
+                                                        ),
+                                                        Text(
+                                                          'Body Number',
+                                                          textAlign:
+                                                              TextAlign.left,
+                                                        ),
+                                                        Text(
+                                                          'Count of passengers',
+                                                          textAlign:
+                                                              TextAlign.left,
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ),
+                                                  Spacer(),
+                                                  IconButton(
+                                                    icon: const Icon(
+                                                        Icons.check_circle),
+                                                    tooltip: 'Active',
+                                                    onPressed: () {},
+                                                  )
+                                                ],
+                                              ),
+                                            )
+                                          ],
+                                        )),
+                                      ],
+                                    );
+                                  },
+                                );
+                              }),
                           Container(
                             padding: const EdgeInsets.only(top: 4),
                             child: const Text(
@@ -264,7 +396,7 @@ class _MyWidgetState extends State<Home> {
                           fontSize: 13,
                           fontWeight: FontWeight.bold,
                           color: Color.fromARGB(255, 79, 255, 40))),
-                  subtitle: Text( currentTerminal ,
+                  subtitle: Text(currentTerminal,
                       style: TextStyle(
                           fontSize: 13,
                           color: Color.fromARGB(255, 255, 255, 255))),
@@ -291,34 +423,41 @@ class _MyWidgetState extends State<Home> {
                             ),
                             Expanded(
                               child: FutureBuilder<List<Terminal>>(
-                    future: getTerminals(),
-                    builder: (context, snapshot) {
-                      if (snapshot.data == null) {
-                        return const Center(
-                          child: CircularProgressIndicator(),
-                        );
-                      } else {
-                        List<Terminal> terminals = snapshot.data!;
-                        return ListView.builder(
-                            itemCount: terminals.length,
-                            itemBuilder: (context, index) {
-                              Terminal terminal = terminals[index];
-                              String terminalName = terminal.address.toString() + '('+ terminal.name.toString() + ')' ;
-                              return  Card(
-                                      child: ListTile(
-                                          leading: FlutterLogo(),
-                                          title:  Text(terminalName),
-                                          trailing: Icon(Icons.more_vert),
-                                          onTap: () {
-                                            setState(() {
-                                             currentTerminal = terminalName;
-                                            });
-                                            Navigator.pop(context);
-                                          }),
-                                    );
-                            });
-                      }
-                    }),
+                                  future: getTerminals(),
+                                  builder: (context, snapshot) {
+                                    if (snapshot.data == null) {
+                                      return const Center(
+                                        child: CircularProgressIndicator(),
+                                      );
+                                    } else {
+                                      List<Terminal> terminals = snapshot.data!;
+                                      return ListView.builder(
+                                          itemCount: terminals.length,
+                                          itemBuilder: (context, index) {
+                                            Terminal terminal =
+                                                terminals[index];
+                                            String terminalName =
+                                                terminal.address.toString() +
+                                                    '(' +
+                                                    terminal.name.toString() +
+                                                    ')';
+                                            return Card(
+                                              child: ListTile(
+                                                  leading: FlutterLogo(),
+                                                  title: Text(terminalName),
+                                                  trailing:
+                                                      Icon(Icons.more_vert),
+                                                  onTap: () {
+                                                    setState(() {
+                                                      currentTerminal =
+                                                          terminalName;
+                                                    });
+                                                    Navigator.pop(context);
+                                                  }),
+                                            );
+                                          });
+                                    }
+                                  }),
                             ),
                           ],
                         );

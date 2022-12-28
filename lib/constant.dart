@@ -3,9 +3,10 @@
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
-  const baseUrl = 'http://192.168.100.84/traykpila-api/public/api';
-// const baseUrl = 'http://192.168.1.13/traykpila-api/public/api';
-const imageBaseUrl = 'http://192.168.100.84/traykpila-api/storage/app/';
+// const baseUrl = 'http://192.168.100.84/traykpila-api/public/api';
+const baseUrl = 'http://192.168.1.13/traykpila-api/public/api';
+// const imageBaseUrl = 'http://192.168.100.84/traykpila-api/storage/app/';
+const imageBaseUrl = 'http://192.168.1.13/traykpila-api/storage/app/';
 const loginUrl = baseUrl + '/login';
 const registerUrl = baseUrl + '/register';
 const registerUrlNew = baseUrl + '/register_new';
