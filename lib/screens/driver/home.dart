@@ -96,7 +96,12 @@ class _MyWidgetState extends State<Home> {
         username = user!.name ?? '';
         email = user!.email ??'';
         String userimage = user!.image ?? '';
+        if(userimage==''){
+        image=imageBaseUrl+'images/driver.png';
+        }else{
         image = imageBaseUrl+userimage;
+        }
+        print(image);
 
       });
     }
@@ -143,7 +148,7 @@ class _MyWidgetState extends State<Home> {
                       ClipRRect(
                         borderRadius: BorderRadius.circular(10.0),
                         child:Image.network(
-                          image,
+                          image, 
                           width: 70,
                           height: 70,
                           fit: BoxFit.cover,
