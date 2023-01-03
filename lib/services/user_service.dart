@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -11,20 +12,52 @@ import 'dart:convert';
 
 import '../models/user.dart';
 
-Future<bool> addImage(Map<String, String> body, String filepath) async {
-  Map<String, String> headers = {
-    'Content-Type': 'multipart/form-data',
-  };
-  var request = http.MultipartRequest('POST', Uri.parse(terminalCreate))
-    ..fields.addAll(body)
-    ..headers.addAll(headers)
-    ..files.add(await http.MultipartFile.fromPath('image', filepath));
-  var response = await request.send();
-  if (response.statusCode == 201) {
-    return true;
-  } else {
-    return false;
+Future<ApiResponse> createPost(String name,String address,String lat,String lng, String? image) async {
+  ApiResponse apiResponse = ApiResponse();
+  try {
+    String token = await getToken();
+    final response = await http.post(Uri.parse(terminalCreateNew),
+    headers: {
+      'Accept': 'application/json',
+    }, body:  {
+      'name': name,
+      'address': address,
+      'lat': lat,
+      'lng': lng,
+      'image': image
+    } );
+
+    print(image);
+
+    // here if the image is null we just send the body, if not null we send the image too
+
+    switch(response.statusCode){
+      case 200:
+        apiResponse.data = jsonDecode(response.body);
+        break;
+      case 422:
+        final errors = jsonDecode(response.body)['errors'];
+        apiResponse.error = errors[errors.keys.elementAt(0)][0];
+        break;
+      case 401:
+        apiResponse.error = unauthorized;
+        break;
+      default:
+        print(response.body);
+        apiResponse.error = somethingWentWrong;
+        break;
+    }
   }
+  catch (e){
+    print(e.toString());
+    apiResponse.error = serverError;
+  }
+  return apiResponse;
+}
+
+String? getStringImage(File? file) {
+  if (file == null) return null ;
+  return base64Encode(file.readAsBytesSync());
 }
 
 Future<bool> addTricycle(Map<String, String> body, String filepath) async {
@@ -36,7 +69,8 @@ Future<bool> addTricycle(Map<String, String> body, String filepath) async {
     ..headers.addAll(headers)
     ..files.add(await http.MultipartFile.fromPath('image', filepath));
   var response = await request.send();
-  print(response.statusCode);
+  var response1 = await http.Response.fromStream(response);
+  print(response1);
   if (response.statusCode == 201) {
     return true;
   } else {

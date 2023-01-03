@@ -8,6 +8,7 @@ import 'package:http/http.dart' as http;
 import 'package:traykpila/models/terminal.dart';
 
 import '../../constant.dart';
+import '../../models/api.response.dart';
 import '../../services/user_service.dart';
 import '../login.dart';
 
@@ -75,7 +76,6 @@ class _MyWidgetState extends State<Home> {
       if (pickedFile != null) {
         _image = File(pickedFile.path);
         imageClick = 1;
-        print(_image.path);
       } else {
         print('No image selected.');
       }
@@ -128,7 +128,7 @@ class _MyWidgetState extends State<Home> {
         String lng = currentLocation!.longitude!.toString();
 
         final url = '$_host?key=$_key&language=en&latlng=$lat,$lng';
-        if (lat != null && lng != null) {
+        if (lng != null) {
           var response = await http.get(Uri.parse(url));
           if (response.statusCode == 200) {
             Map data = jsonDecode(response.body);
@@ -147,37 +147,30 @@ class _MyWidgetState extends State<Home> {
     );
   }
 
-  Future<void> _register() async {
-    print(imageClick);
-    if (imageClick == 0) {
+    void _register() async {
+        String? image = _image ==  null ? null : getStringImage(_image);
+
+    ApiResponse response = await createPost(txtName.text,txtAdress.text,currentLocation!.latitude!.toString(),currentLocation!.latitude!.toString(), image);
+
+    if(response.error ==  null) {
+      setState(() {
+          loading = false;
+        });
       ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text('Add image first')));
-    } else {
-      Map<String, String> body = {
-        'name': txtName.text,
-        'address': txtAdress.text,
-        'image': _image.path,
-        'lat': currentLocation!.latitude!.toString(),
-        'lng': currentLocation!.longitude!.toString(),
-      };
-
-      if (await addImage(body, _image.path) == false) {
-        ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text('Server Error')));
-
-        Navigator.pushReplacement(context,
-            MaterialPageRoute(builder: (BuildContext context) => super.widget));
-      } else {
-        ScaffoldMessenger.of(context)
             .showSnackBar(SnackBar(content: Text('Added Successfully')));
 
         Navigator.pushReplacement(context,
             MaterialPageRoute(builder: (BuildContext context) => super.widget));
 
         clearAll();
-      }
+    }
+    else {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text('${response.error}')
+      ));
     }
   }
+
 
   void clearAll() {
     imageClick = 0;
@@ -293,11 +286,19 @@ class _MyWidgetState extends State<Home> {
                       )),
               Padding(
                   padding: const EdgeInsets.only(top: 70.0),
-                  child: TextButton(
+                  child:loading
+                  ? const Center(
+                      child: CircularProgressIndicator(),
+                    )
+                  : TextButton(
                       onPressed: () {
                         if (formkey.currentState!.validate()) {
                           formkey.currentState!.save();
+                          setState(() {
+                          loading = true;
                           _register();
+
+                        });
                         }
                       },
                       style: ButtonStyle(
@@ -330,11 +331,16 @@ class _MyWidgetState extends State<Home> {
           color: const Color.fromRGBO(243, 240, 240, 1.0),
           border: Border.all(color: Color.fromARGB(171, 8, 223, 133), width: 5),
         ),
-        child: const Image(
+        // ignore: unnecessary_null_comparison
+        child:  imageClick == 0
+                ? const Image(
           image: AssetImage('assets/profile.png'),
           width: 40,
           height: 40,
-        ),
+        ): Image.file(
+                _image,
+                fit: BoxFit.cover,
+              ),
       );
 
   // ignore: non_constant_identifier_names
