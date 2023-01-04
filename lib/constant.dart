@@ -22,9 +22,12 @@ const terminalCreateNew = baseUrl + '/terminal/createNew';
 
 const terminalShow = baseUrl + '/terminal';
 
+
 //tricycle api
 const tricycleCreate = baseUrl + '/tricyle/create';
-const tricycleShow = baseUrl + '/tricycle';
+const tricycleCreateNew = baseUrl + '/tricyle/createNew';
+
+const tricycleShow = baseUrl + '/tricyle';
 
 const serverError = 'Server error';
 const unauthorized = 'Unauthorized';

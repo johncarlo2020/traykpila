@@ -148,9 +148,9 @@ class _MyWidgetState extends State<Home> {
   }
 
     void _register() async {
-        String? image = _image ==  null ? null : getStringImage(_image);
+    String? image = _image ==  null ? null : getStringImage(_image);
 
-    ApiResponse response = await createPost(txtName.text,txtAdress.text,currentLocation!.latitude!.toString(),currentLocation!.latitude!.toString(), image);
+    ApiResponse response = await TerminalAdd(txtName.text,txtAdress.text,currentLocation!.latitude!.toString(),currentLocation!.latitude!.toString(), image);
 
     if(response.error ==  null) {
       setState(() {

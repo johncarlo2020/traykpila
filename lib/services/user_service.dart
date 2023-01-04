@@ -12,7 +12,7 @@ import 'dart:convert';
 
 import '../models/user.dart';
 
-Future<ApiResponse> createPost(String name,String address,String lat,String lng, String? image) async {
+Future<ApiResponse> TerminalAdd(String name,String address,String lat,String lng, String? image) async {
   ApiResponse apiResponse = ApiResponse();
   try {
     String token = await getToken();
@@ -27,9 +27,45 @@ Future<ApiResponse> createPost(String name,String address,String lat,String lng,
       'image': image
     } );
 
-    print(image);
+    switch(response.statusCode){
+      case 200:
+        apiResponse.data = jsonDecode(response.body);
+        break;
+      case 422:
+        final errors = jsonDecode(response.body)['errors'];
+        apiResponse.error = errors[errors.keys.elementAt(0)][0];
+        break;
+      case 401:
+        apiResponse.error = unauthorized;
+        break;
+      default:
+        print(response.body);
+        apiResponse.error = somethingWentWrong;
+        break;
+    }
+  }
+  catch (e){
+    print(e.toString());
+    apiResponse.error = serverError;
+  }
+  return apiResponse;
+}
 
-    // here if the image is null we just send the body, if not null we send the image too
+Future<ApiResponse> addTricycle(String name,String plate_number,String body_number,String max_passenger,String user_id, String? image) async {
+  ApiResponse apiResponse = ApiResponse();
+  try {
+    String token = await getToken();
+    final response = await http.post(Uri.parse(tricycleCreateNew),
+    headers: {
+      'Accept': 'application/json',
+    }, body:  {
+      'name': name,
+      'plate_number': plate_number,
+      'body_number': body_number,
+      'max_passenger': max_passenger,
+      'user_id': user_id,
+      'image': image
+    } );
 
     switch(response.statusCode){
       case 200:
@@ -58,24 +94,6 @@ Future<ApiResponse> createPost(String name,String address,String lat,String lng,
 String? getStringImage(File? file) {
   if (file == null) return null ;
   return base64Encode(file.readAsBytesSync());
-}
-
-Future<bool> addTricycle(Map<String, String> body, String filepath) async {
-  Map<String, String> headers = {
-    'Content-Type': 'multipart/form-data',
-  };
-  var request = http.MultipartRequest('POST', Uri.parse(tricycleCreate))
-    ..fields.addAll(body)
-    ..headers.addAll(headers)
-    ..files.add(await http.MultipartFile.fromPath('image', filepath));
-  var response = await request.send();
-  var response1 = await http.Response.fromStream(response);
-  print(response1);
-  if (response.statusCode == 201) {
-    return true;
-  } else {
-    return false;
-  }
 }
 
 Future<ApiResponse> login(String email, String password) async {

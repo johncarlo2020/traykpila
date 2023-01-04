@@ -25,6 +25,8 @@ class _RegisterState extends State<Register> {
   TextEditingController txtPlateNum = TextEditingController();
   TextEditingController txtMaxPassenger = TextEditingController();
   bool loading = false;
+  int imageClick = 0;
+
 
   late File _image;
   final picker = ImagePicker();
@@ -34,6 +36,7 @@ class _RegisterState extends State<Register> {
     setState(() {
       if (pickedFile != null) {
         _image = File(pickedFile.path);
+        imageClick = 1;
         print(_image.path);
       } else {
         print('No image selected.');
@@ -41,7 +44,16 @@ class _RegisterState extends State<Register> {
     });
   }
 
-  Future<void> _register() async {
+   void clearAll() {
+    imageClick = 0;
+    txtBodyNum.text = '';
+    txtPlateNum.text = '';
+    txtMaxPassenger.text = '';
+    txtName.text = '';
+    loading = false;
+  }
+
+  void _register() async {
     int response = await getUserId();
     Map<String, String> body = {
       'name': txtName.text,
@@ -51,19 +63,32 @@ class _RegisterState extends State<Register> {
       'max_passenger': txtMaxPassenger.text,
       'user_id': response.toString()
     };
-    if (await addTricycle(body, _image.path) == false) {
+      String? image = _image ==  null ? null : getStringImage(_image);
+
+    ApiResponse response1 = await addTricycle(txtName.text,txtPlateNum.text,txtBodyNum.text,txtMaxPassenger.text,response.toString(), image);
+
+    if(response1.error ==  null) {
+      setState(() {
+          loading = false;
+          clearAll();
+        });
       ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text('Server Error')));
-    } else {
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text('Added Successfully')));
-      Navigator.pushReplacement(context,
-          MaterialPageRoute(builder: (BuildContext context) => super.widget));
+            .showSnackBar(SnackBar(content: Text('Added Successfully')));
+
+        Navigator.pushReplacement(context,
+            MaterialPageRoute(builder: (BuildContext context) => super.widget));
+
+    }
+    else {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text('${response1.error}')
+      ));
     }
   }
 
   @override
   void initState() {
+    imageClick = 0;
     super.initState();
   }
 
@@ -154,7 +179,6 @@ class _RegisterState extends State<Register> {
                     TextFormField(
                       controller: txtMaxPassenger,
                       validator: (val) => val!.isEmpty ? 'max passenger' : null,
-                      obscureText: true,
                       // ignore: prefer_const_constructors
                       decoration: InputDecoration(
                           isDense: true,
@@ -212,11 +236,15 @@ class _RegisterState extends State<Register> {
               color: Color.fromRGBO(217, 217, 217, 1.0),
             ),
             borderRadius: BorderRadius.all(Radius.circular(100))),
-        child: const Image(
+        child:imageClick == 0
+        ?const Image(
           image: AssetImage('assets/tricycle.png'),
           width: 50,
           height: 50,
-        ),
+        ): Image.file(
+                _image,
+                fit: BoxFit.cover,
+              ),
       );
 }
 

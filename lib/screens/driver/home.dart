@@ -16,6 +16,7 @@ import '../../services/user_service.dart';
 import '../login.dart';
 import 'register.dart';
 import 'package:traykpila/models/terminal.dart';
+import 'package:traykpila/models/tricycle.dart';
 import '../../models/user.dart';
 import '../../constant.dart';
 
@@ -62,6 +63,43 @@ class _MyWidgetState extends State<Home> {
       terminals.add(terminal);
     }
     return terminals;
+  }
+
+   Future<List<Tricycle>> getTricycle() async {
+
+    String token = await getToken();
+    int userId = await getUserId();
+
+  print(tricycleShow);
+    final response = await http.post(Uri.parse(tricycleShow), 
+     headers: {
+      'Accept': 'application/json',
+      'Authorization': 'Bearer $token'
+    },
+        body: {'user_id': userId.toString()}
+    );
+
+    print(response.body);
+    var jsonData = jsonDecode(response.body);
+    var jsonArray = jsonData['tricycle'];
+    print(jsonArray.toString());
+    List<Tricycle> tricycles = [];
+
+    for (var jsonTricycle in jsonArray) {
+      Tricycle tricycle = Tricycle(
+          id: jsonTricycle['id'],
+          name: jsonTricycle['name'],
+          plate_number: jsonTricycle['plate_number'],
+          body_number: jsonTricycle['body_number'],
+          max_passenger: jsonTricycle['max_passenger'],
+          user_id: jsonTricycle['user_id'],
+          image: jsonTricycle['image'],
+          );
+      tricycles.add(tricycle);
+    }
+
+    print('asdasd');
+    return tricycles;
   }
 
   signOut() async {
@@ -281,13 +319,21 @@ class _MyWidgetState extends State<Home> {
                                               Color.fromARGB(255, 65, 220, 135),
                                         ),
                                         Expanded(
-                                            child: ListView(
-                                          physics:
-                                              const AlwaysScrollableScrollPhysics(),
-                                          padding: EdgeInsets.all(16.0),
-                                          shrinkWrap: true,
-                                          children: <Widget>[
-                                            Container(
+                                          child: FutureBuilder<List<Tricycle>>(
+                                  future: getTricycle(),
+                                  builder: (context, snapshot) {
+                                    if (snapshot.data == null) {
+                                      return const Center(
+                                        child: CircularProgressIndicator(),
+                                      );
+                                    } else {
+                                      List<Tricycle> tricycle = snapshot.data!;
+                                      return ListView.builder(
+                                          itemCount: tricycle.length,
+                                          itemBuilder: (context, index) {
+                                            Tricycle tricycles =
+                                                tricycle[index];
+                                            return Container(
                                               width: double.infinity,
                                               padding: EdgeInsets.all(16.0),
                                               decoration: BoxDecoration(
@@ -296,9 +342,12 @@ class _MyWidgetState extends State<Home> {
                                                           Colors.blueAccent)),
                                               child: Row(
                                                 children: [
-                                                  Image(
-                                                      image: AssetImage(
-                                                          'assets/profilepic.png')),
+                                                  Image.network(
+                                                      tricycles.image.toString(),
+                                                      width: 70,
+                                                      height: 70,
+                                                      fit: BoxFit.cover,
+                                                    ),
                                                   SizedBox(
                                                     width: 10,
                                                   ),
@@ -306,17 +355,17 @@ class _MyWidgetState extends State<Home> {
                                                     child: Column(
                                                       children: [
                                                         Text(
-                                                          'Plate Number',
+                                                          'Plate Number: '+tricycles.plate_number.toString(),
                                                           textAlign:
                                                               TextAlign.left,
                                                         ),
                                                         Text(
-                                                          'Body Number',
+                                                          'Body Number: '+tricycles.body_number.toString(),
                                                           textAlign:
                                                               TextAlign.left,
                                                         ),
                                                         Text(
-                                                          'Count of passengers',
+                                                          'max Passenger: '+tricycles.max_passenger.toString(),
                                                           textAlign:
                                                               TextAlign.left,
                                                         ),
@@ -330,11 +379,13 @@ class _MyWidgetState extends State<Home> {
                                                     tooltip: 'Active',
                                                     onPressed: () {},
                                                   )
-                                                ],
+                                                     ],
                                               ),
-                                            )
-                                          ],
-                                        )),
+                                            );
+                                          });
+                                    }
+                                  }),
+                                            ),
                                       ],
                                     );
                                   },
