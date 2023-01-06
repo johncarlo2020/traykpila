@@ -83,11 +83,46 @@ class _MyWidgetState extends State<Home> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-            title: const Text(
-          "Passenger ",
-          style: TextStyle(
-              color: Color.fromARGB(255, 255, 255, 255), fontSize: 16),
-        )),
+          backgroundColor: Colors.white,
+          leading: Padding(
+            padding: EdgeInsetsDirectional.fromSTEB(10, 10, 10, 10),
+            child: Image.asset(
+              'assets/trayklogo.png',
+              width: 100,
+              height: 100,
+              fit: BoxFit.cover,
+            ),
+          ),
+          actions: [
+            Container(
+              width: 100,
+              height: 100,
+              decoration: BoxDecoration(
+                color: Colors.white,
+              ),
+              child: ListView(
+                padding: EdgeInsets.zero,
+                scrollDirection: Axis.vertical,
+                children: [
+                  Container(
+                    width: 50,
+                    height: 55,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                    ),
+                    child: Icon(
+                      Icons.menu,
+                      color: Color(0xFF00AC00),
+                      size: 24,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+          centerTitle: false,
+          elevation: 2,
+        ),
         floatingActionButton: FloatingActionButton(
           onPressed: () {
             signOut();
@@ -101,6 +136,33 @@ class _MyWidgetState extends State<Home> {
             padding: const EdgeInsets.all(20.0),
             child: (Column(
               children: [
+                // Generated code for this Row Widget...
+                Row(
+                  mainAxisSize: MainAxisSize.max,
+                  children: [
+                    Padding(
+                      padding: EdgeInsetsDirectional.fromSTEB(20, 0, 0, 0),
+                      child: Text(
+                        'Need a Tricycle?\nBook Now!',
+                        style: TextStyle(
+                          fontFamily: 'Poppins',
+                          color: Color(0xFF069E1C),
+                          fontSize: 25,
+                        ),
+                      ),
+                    ),
+                    Padding(
+                      padding: EdgeInsetsDirectional.fromSTEB(30, 0, 0, 0),
+                      child: Image.asset(
+                        'assets/trayklogo.png',
+                        width: 100,
+                        height: 100,
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                  ],
+                ),
+
                 TextFormField(
                   validator: (val) => val!.isEmpty ? 'Invalid Name' : null,
                   // ignore: prefer_const_constructors
