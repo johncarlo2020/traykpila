@@ -7,12 +7,12 @@ import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
 import 'package:http/http.dart' as http;
+import 'package:traykpila/screens/passenger/details.dart' as Details;
 
 import '../../constant.dart';
 import '../../services/user_service.dart';
 import 'login.dart';
 import 'package:traykpila/models/terminal.dart';
-
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -28,7 +28,7 @@ class _MyWidgetState extends State<Home> {
   List<LatLng> polylineCoordinates = [];
   LocationData? currentLocation;
 
-    Future<List<Terminal>> getTerminals() async {
+  Future<List<Terminal>> getTerminals() async {
     String token = await getToken();
 
     final response = await http.post(Uri.parse(terminalShow), headers: {
@@ -53,10 +53,10 @@ class _MyWidgetState extends State<Home> {
     return terminals;
   }
 
-
   signOut() async {
     await logout();
-    Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) => Login()), (route) => false);
+    Navigator.of(context).pushAndRemoveUntil(
+        MaterialPageRoute(builder: (context) => Login()), (route) => false);
   }
 
   void getCurrentLocation() {
@@ -85,81 +85,87 @@ class _MyWidgetState extends State<Home> {
         appBar: AppBar(
             title: const Text(
           "Passenger ",
-          style: TextStyle(color: Colors.black, fontSize: 16),
+          style: TextStyle(
+              color: Color.fromARGB(255, 255, 255, 255), fontSize: 16),
         )),
-         floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          signOut();
-        },
-        child: Icon(Icons.logout_rounded),
-        backgroundColor: Colors.green,
-      ),
-        body: Padding(
-        padding: const EdgeInsets.only(top: 10.0),
-        child: Padding(
-          padding: const EdgeInsets.all(20.0),
-          child: (Column(
-            children: [
-              TextFormField(
-                validator: (val) => val!.isEmpty ? 'Invalid Name' : null,
-                // ignore: prefer_const_constructors
-                decoration: InputDecoration(
-                    isDense: true,
-                    labelText: 'Search Terminal',
-                    border: InputBorder.none,
-                    filled: true,
-                    fillColor: const Color.fromRGBO(229, 255, 238, 1.0),
-                    prefixIcon: const Icon(
-                      Icons.search_outlined,
-                      size: 30,
-                    )),
-              ),
-              const Divider(
-                height: 20,
-                thickness: 2,
-                indent: 0,
-                endIndent: 0,
-                color: Color.fromARGB(255, 49, 241, 129),
-              ),
-              Expanded(
-                child: FutureBuilder<List<Terminal>>(
-                    future: getTerminals(),
-                    builder: (context, snapshot) {
-                      if (snapshot.data == null) {
-                        return Center(
-                          child: CircularProgressIndicator(),
-                        );
-                      } else {
-                        List<Terminal> terminals = snapshot.data!;
-                        return ListView.builder(
-                            itemCount: terminals.length,
-                            itemBuilder: (context, index) {
-                              Terminal terminal = terminals[index];
-                              return Card(
-                                child: ListTile(
-                                  leading: Icon(
-                                    Icons.map,
-                                    size: 30.0,
-                                    color: Color.fromARGB(255, 72, 206, 133),
-                                  ),
-                                  title: Text(terminal.name.toString()),
-                                  subtitle: Text(terminal.address.toString()),
-                                  trailing: Text('Book'),
-                                  onTap: () {
-                                    
-                                  },
-                                  //  onTap: ,
-                                ),
-                              );
-                            });
-                      }
-                    }),
-              )
-            ],
-          )),
+        floatingActionButton: FloatingActionButton(
+          onPressed: () {
+            signOut();
+          },
+          child: Icon(Icons.logout_rounded),
+          backgroundColor: Colors.green,
         ),
-      )
-        
-        );
+        body: Padding(
+          padding: const EdgeInsets.only(top: 10.0),
+          child: Padding(
+            padding: const EdgeInsets.all(20.0),
+            child: (Column(
+              children: [
+                TextFormField(
+                  validator: (val) => val!.isEmpty ? 'Invalid Name' : null,
+                  // ignore: prefer_const_constructors
+                  decoration: InputDecoration(
+                      isDense: true,
+                      labelText: 'Search Terminal',
+                      border: InputBorder.none,
+                      filled: true,
+                      fillColor: const Color.fromRGBO(229, 255, 238, 1.0),
+                      prefixIcon: const Icon(
+                        Icons.search_outlined,
+                        size: 30,
+                      )),
+                ),
+                const Divider(
+                  height: 20,
+                  thickness: 2,
+                  indent: 0,
+                  endIndent: 0,
+                  color: Color.fromARGB(255, 49, 241, 129),
+                ),
+                Expanded(
+                  child: FutureBuilder<List<Terminal>>(
+                      future: getTerminals(),
+                      builder: (context, snapshot) {
+                        if (snapshot.data == null) {
+                          return Center(
+                            child: CircularProgressIndicator(),
+                          );
+                        } else {
+                          List<Terminal> terminals = snapshot.data!;
+                          return ListView.builder(
+                              itemCount: terminals.length,
+                              itemBuilder: (context, index) {
+                                Terminal terminal = terminals[index];
+                                return Card(
+                                  child: ListTile(
+                                      leading: Icon(
+                                        Icons.map,
+                                        size: 30.0,
+                                        color:
+                                            Color.fromARGB(255, 72, 206, 133),
+                                      ),
+                                      title: Text(terminal.name.toString()),
+                                      subtitle:
+                                          Text(terminal.address.toString()),
+                                      trailing: Text('Book'),
+                                      onTap: () {
+                                        Navigator.of(context)
+                                            .pushAndRemoveUntil(
+                                                MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        Details.Details()),
+                                                (route) => false);
+                                      }
+                                      //  onTap: ,
+                                      ),
+                                );
+                              });
+                        }
+                      }),
+                )
+              ],
+            )),
+          ),
+        ));
   }
 }
