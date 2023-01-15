@@ -165,11 +165,6 @@ class _MyWidgetState extends State<Home> {
   }
 
   void ActiveClick() async{
-    setState(() {
-        loading = true;
-        Navigator.pop(context);
-
-      });
     int user_id = await getUserId();
 
     ApiResponse response = await active_driver(user_id.toString(), currentTerminal_id.toString(), Tryk_id,'1');
@@ -188,7 +183,7 @@ class _MyWidgetState extends State<Home> {
     }
      setState(() {
       active=1;
-                  });
+      });
   }
 
   void InactiveClick() async{
@@ -280,7 +275,7 @@ class _MyWidgetState extends State<Home> {
                 primary: Color.fromARGB(255, 179, 47, 47),
                 // Background Color
               )  ,
-              icon: active==1
+              icon: active == 1
                           ? Icon(
                             Icons.check_circle,
                             size: 24.0,)
