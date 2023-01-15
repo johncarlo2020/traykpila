@@ -40,6 +40,13 @@ class _MyWidgetState extends State<Home> {
   String image = '';
   String email = '';
 
+  String Tryk_name='';
+  String Tryk_image='';
+  String Tryk_id='';
+  int active = 0;
+
+  late int currentTerminal_id;
+
   Future<List<Terminal>> getTerminals() async {
     String token = await getToken();
 
@@ -98,7 +105,6 @@ class _MyWidgetState extends State<Home> {
       tricycles.add(tricycle);
     }
 
-    print('asdasd');
     return tricycles;
   }
 
@@ -150,6 +156,63 @@ class _MyWidgetState extends State<Home> {
     }
   }
 
+  void trykpic(String id,String name,String image){
+    setState(() {
+             Tryk_name=name;
+             Tryk_image=image;
+             Tryk_id=id;
+          });
+  }
+
+  void ActiveClick() async{
+    setState(() {
+        loading = true;
+        Navigator.pop(context);
+
+      });
+    int user_id = await getUserId();
+
+    ApiResponse response = await active_driver(user_id.toString(), currentTerminal_id.toString(), Tryk_id,'1');
+    if (response.error == null) {
+    ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text('You are now Active Driver')));
+           setState(() {
+        loading = false;
+        Navigator.pop(context);
+
+      });
+    } else {
+          ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text('${response.error}')));
+     
+    }
+     setState(() {
+      active=1;
+                  });
+  }
+
+  void InactiveClick() async{
+    int user_id = await getUserId();
+
+    ApiResponse response = await active_driver(user_id.toString(), currentTerminal_id.toString(), Tryk_id,'0');
+    if (response.error == null) {
+    ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text('You are now Inactive Driver')));
+           setState(() {
+        loading = false;
+        Navigator.pop(context);
+      });
+    } else {
+          ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text('${response.error}')));
+     
+    }
+
+    setState(() {
+      active=0;
+                  });
+  }
+
   @override
   void initState() {
     loading = true;
@@ -179,43 +242,53 @@ class _MyWidgetState extends State<Home> {
                     child: Column(
                       children: [
                         TextButton.icon(
-                          onPressed: () => Navigator.pop(context, 'OK'),
+                          onPressed: () {
+                            ActiveClick();
+                            },
                           style: TextButton.styleFrom(
                             primary: Color.fromARGB(255, 47, 179, 65),
                             // Background Color
                           ),
-                          icon: Icon(
+                          icon:  Icon(
                             Icons.check_circle,
-                            size: 24.0,
-                          ),
+                            size: 24.0,),
                           label: Text('Active'),
                         ),
                         TextButton.icon(
-                          onPressed: () => Navigator.pop(context, 'OK'),
+                          onPressed: () {
+                            InactiveClick();
+                            },
                           style: TextButton.styleFrom(
-                            primary: Color.fromARGB(255, 47, 179, 65),
+                            primary: Color.fromARGB(255, 179, 47, 47),
                             // Background Color
                           ),
-                          icon: Icon(
-                            Icons.check_circle,
+                          icon: const Icon(
+                            Icons.remove_circle_outlined,
                             size: 24.0,
                           ),
-                          label: Text('Active'),
+                          label: Text('Inactive'),
                         ),
                       ],
                     ),
                   ),
                 ),
               ),
-              style: TextButton.styleFrom(
+              style: active==1 ? TextButton.styleFrom(
                 primary: Color.fromARGB(255, 255, 255, 255),
                 // Background Color
-              ),
-              icon: Icon(
-                Icons.check_circle,
-                size: 24.0,
-              ),
-              label: Text('Active'),
+              ) : TextButton.styleFrom(
+                primary: Color.fromARGB(255, 179, 47, 47),
+                // Background Color
+              )  ,
+              icon: active==1
+                          ? Icon(
+                            Icons.check_circle,
+                            size: 24.0,)
+                          : Icon(
+                            Icons.remove_circle_outlined,
+                            size: 24.0,
+                          ),
+              label: active == 1 ?  Text('Active') : Text('Inactive') ,
             ),
           ],
         ),
@@ -288,11 +361,17 @@ class _MyWidgetState extends State<Home> {
                               child: Container(
                                 child: ClipRRect(
                                   borderRadius: BorderRadius.circular(10.0),
-                                  child: const Image(
-                                    height: 50,
-                                    width: 50,
-                                    image: AssetImage('assets/profilepic.png'),
-                                  ),
+                                  child: Tryk_image == ''
+                                    ?const Image(
+                                      image: AssetImage('assets/tricycle.png'),
+                                      width: 50,
+                                      height: 50,
+                                    ): Image.network(
+                                            Tryk_image,
+                                            width: 50,
+                                            height: 50,
+                                            fit: BoxFit.cover,
+                                          ),
                                 ),
                               ),
                               onTap: () {
@@ -309,7 +388,10 @@ class _MyWidgetState extends State<Home> {
                                                     fontSize: 20,
                                                     fontWeight: FontWeight.bold,
                                                     color: Color.fromARGB(
-                                                        255, 0, 0, 0)))),
+                                                        255, 0, 0, 0)
+                                                        )
+                                                        )
+                                                        ),
                                         const Divider(
                                           height: 1,
                                           thickness: 1,
@@ -377,7 +459,11 @@ class _MyWidgetState extends State<Home> {
                                                     icon: const Icon(
                                                         Icons.check_circle),
                                                     tooltip: 'Active',
-                                                    onPressed: () {},
+                                                    onPressed: () {
+                                                      trykpic(tricycles.id.toString(),tricycles.name.toString(),tricycles.image.toString());
+                                                    Navigator.pop(context);
+
+                                                    },
                                                   )
                                                      ],
                                               ),
@@ -393,8 +479,8 @@ class _MyWidgetState extends State<Home> {
                               }),
                           Container(
                             padding: const EdgeInsets.only(top: 4),
-                            child: const Text(
-                              'Active Tricycle - Tric one',
+                            child:  Text(
+                              'Active Tricycle :'+ Tryk_name,
                               textAlign: TextAlign.right,
                               style: TextStyle(
                                   fontSize: 10,
@@ -502,6 +588,7 @@ class _MyWidgetState extends State<Home> {
                                                     setState(() {
                                                       currentTerminal =
                                                           terminalName;
+                                                          currentTerminal_id=terminal.id!;
                                                     });
                                                     Navigator.pop(context);
                                                   }),

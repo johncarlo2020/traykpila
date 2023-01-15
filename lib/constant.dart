@@ -13,6 +13,7 @@ const registerUrlNew = baseUrl + '/register_new';
 
 const logoutUrl = baseUrl + '/logout';
 const userUrl = baseUrl + '/user';
+const activeDriver = baseUrl+ '/active_driver';
 
 //tricycle api
 const terminalCount = baseUrl + '/terminal/count';

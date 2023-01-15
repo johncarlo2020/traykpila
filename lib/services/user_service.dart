@@ -124,6 +124,42 @@ Future<ApiResponse> login(String email, String password) async {
   return apiResponse;
 }
 
+Future<ApiResponse> active_driver(String user_id, String terminal_id, String tricycle_id, String active) async {
+  ApiResponse apiResponse = ApiResponse();
+
+  try {
+    final response = await http.post(Uri.parse(activeDriver),
+        headers: {'Accept': 'application/json'},
+        body: {
+          'user_id': user_id, 
+          'terminal_id': terminal_id,
+          'tricycle_id': tricycle_id,
+          'active': active
+          });
+      print(response.statusCode);
+
+    switch (response.statusCode) {
+      case 200:
+        print(200);
+        break;
+      case 422:
+        final errors = jsonDecode(response.body)['errors'];
+        apiResponse.error = errors[errors.keys.elementAt(0)][0];
+        break;
+      case 403:
+        apiResponse.error = jsonDecode(response.body)['message'];
+        break;
+      default:
+        apiResponse.error = somethingWentWrong;
+        break;
+    }
+  } catch (e) {
+    print(e.toString());
+    apiResponse.error = serverError;
+  }
+  return apiResponse;
+}
+
 
 // ignore: non_constant_identifier_names
 Future<ApiResponse> register(String name, String email, String password,
