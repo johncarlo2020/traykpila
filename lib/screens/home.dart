@@ -83,53 +83,16 @@ class _MyWidgetState extends State<Home> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          backgroundColor: Colors.white,
-          leading: Padding(
-            padding: EdgeInsetsDirectional.fromSTEB(10, 10, 10, 10),
-            child: Image.asset(
-              'assets/trayklogo.png',
-              width: 100,
-              height: 100,
-              fit: BoxFit.cover,
-            ),
+          backgroundColor: Color.fromRGBO(37, 195, 108, 1.0),
+          title: const Text(
+            "Dashboard",
+            style: TextStyle(
+                color: Color.fromARGB(255, 255, 255, 255), fontSize: 16),
           ),
-          actions: [
-            Container(
-              width: 100,
-              height: 100,
-              decoration: BoxDecoration(
-                color: Colors.white,
-              ),
-              child: ListView(
-                padding: EdgeInsets.zero,
-                scrollDirection: Axis.vertical,
-                children: [
-                  Container(
-                    width: 50,
-                    height: 55,
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                    ),
-                    child: Icon(
-                      Icons.menu,
-                      color: Color(0xFF00AC00),
-                      size: 24,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
           centerTitle: false,
           elevation: 2,
         ),
-        floatingActionButton: FloatingActionButton(
-          onPressed: () {
-            signOut();
-          },
-          child: Icon(Icons.logout_rounded),
-          backgroundColor: Colors.green,
-        ),
+        drawer: NavigationDrawer(),
         body: Padding(
           padding: const EdgeInsets.only(top: 10.0),
           child: Padding(
@@ -230,4 +193,51 @@ class _MyWidgetState extends State<Home> {
           ),
         ));
   }
+}
+
+class NavigationDrawer extends StatelessWidget {
+  const NavigationDrawer({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) => Drawer(
+          child: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.only(top: 60.0),
+          child: Wrap(
+            runSpacing: 16,
+            children: <Widget>[
+              ListTile(
+                  leading: const Icon(Icons.logout),
+                  title: const Text('Log-out'),
+                  onTap: () async {
+                    await logout();
+                    // ignore: use_build_context_synchronously
+                    Navigator.of(context).pushAndRemoveUntil(
+                        MaterialPageRoute(builder: (context) => Login()),
+                        (route) => false);
+                  }),
+              ListTile(
+                  leading: const Icon(Icons.logout),
+                  title: const Text('Log-out'),
+                  onTap: () async {
+                    await logout();
+                    // ignore: use_build_context_synchronously
+                    Navigator.of(context).pushAndRemoveUntil(
+                        MaterialPageRoute(builder: (context) => Login()),
+                        (route) => false);
+                  }),
+              ListTile(
+                  leading: const Icon(Icons.logout),
+                  title: const Text('Log-out'),
+                  onTap: () async {
+                    await logout();
+                    // ignore: use_build_context_synchronously
+                    Navigator.of(context).pushAndRemoveUntil(
+                        MaterialPageRoute(builder: (context) => Login()),
+                        (route) => false);
+                  }),
+            ],
+          ),
+        ),
+      ));
 }

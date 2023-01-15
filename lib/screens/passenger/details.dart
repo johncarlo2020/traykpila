@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../home.dart';
 
 class Details extends StatefulWidget {
   const Details({Key? key}) : super(key: key);
@@ -23,48 +24,34 @@ class _HomePageWidgetState extends State<Details> {
       key: scaffoldKey,
       backgroundColor: Colors.white,
       appBar: AppBar(
-        backgroundColor: Colors.white,
-        automaticallyImplyLeading: false,
-        leading: Padding(
-          padding: EdgeInsetsDirectional.fromSTEB(10, 10, 10, 10),
-          child: Container(
-            width: 100,
-            height: 100,
-            decoration: BoxDecoration(
-              color: Colors.white,
-            ),
-            child: Image.asset(
-              'assets/trayklogo.png',
-              width: 100,
-              height: 100,
-              fit: BoxFit.cover,
-            ),
+        backgroundColor: Color.fromRGBO(37, 195, 108, 1.0),
+        leading: IconButton(
+          onPressed: () async {
+            Navigator.of(context).pushAndRemoveUntil(
+                MaterialPageRoute(builder: (context) => const Home()),
+                (route) => false);
+          },
+          style: TextButton.styleFrom(
+            primary: Color.fromARGB(255, 255, 255, 255),
+            // Background Color
+          ),
+          icon: Icon(
+            Icons.arrow_back,
+            size: 24.0,
           ),
         ),
-        actions: [
-          Padding(
-            padding: EdgeInsetsDirectional.fromSTEB(10, 10, 10, 10),
-            child: Container(
-              width: 50,
-              height: 55,
-              decoration: BoxDecoration(
-                color: Colors.white,
-              ),
-              child: Icon(
-                Icons.menu,
-                color: Color(0xFF00AF00),
-                size: 24,
-              ),
-            ),
-          ),
-        ],
+        title: const Text(
+          "Booking Details",
+          style: TextStyle(
+              color: Color.fromARGB(255, 255, 255, 255), fontSize: 16),
+        ),
+        actions: [],
         centerTitle: false,
         elevation: 2,
       ),
-      body: SafeArea(
-        child: GestureDetector(
-          onTap: () => FocusScope.of(context).requestFocus(_unfocusNode),
-          child: Column(
+      body: Column(
+        children: [
+          Column(
             mainAxisSize: MainAxisSize.max,
             children: [
               SingleChildScrollView(
@@ -195,7 +182,6 @@ class _HomePageWidgetState extends State<Details> {
                 padding: EdgeInsetsDirectional.fromSTEB(50, 0, 50, 50),
                 child: Container(
                   width: double.infinity,
-                  height: 240.4,
                   decoration: BoxDecoration(
                     color: Colors.white,
                   ),
@@ -225,27 +211,20 @@ class _HomePageWidgetState extends State<Details> {
                           ),
                         ),
                       ),
-                      Padding(
-                        padding: EdgeInsetsDirectional.fromSTEB(5, 5, 5, 5),
-                        child: Text(
-                          'Terminal: 6th St. TODA (GREEN TRICYCLE TERMINAL)',
-                          style: TextStyle(
-                            fontFamily: 'Poppins',
-                            color: Color(0xFF00AC00),
-                            fontSize: 17,
-                          ),
+                      Text(
+                        'Terminal: 6th St. TODA (GREEN TRICYCLE TERMINAL)',
+                        style: TextStyle(
+                          fontFamily: 'Poppins',
+                          color: Color(0xFF00AC00),
+                          fontSize: 17,
                         ),
                       ),
-                      Padding(
-                        padding: EdgeInsetsDirectional.fromSTEB(5, 5, 5, 5),
-                        child: Text(
-                          'Phone: 09232324356',
-                          textAlign: TextAlign.start,
-                          style: TextStyle(
-                            fontFamily: 'Poppins',
-                            color: Color(0xFF00AC00),
-                            fontSize: 17,
-                          ),
+                      Text(
+                        'Phone: 09232324356',
+                        style: TextStyle(
+                          fontFamily: 'Poppins',
+                          color: Color(0xFF00AC00),
+                          fontSize: 17,
                         ),
                       ),
                     ],
@@ -257,14 +236,14 @@ class _HomePageWidgetState extends State<Details> {
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.green,
                   padding:
-                      const EdgeInsets.symmetric(horizontal: 120, vertical: 20),
+                      const EdgeInsets.symmetric(horizontal: 120, vertical: 15),
                 ),
                 label: const Text('Message'),
                 icon: const Icon(Icons.message),
               )
             ],
           ),
-        ),
+        ],
       ),
     );
   }
