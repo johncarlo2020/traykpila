@@ -200,44 +200,135 @@ class NavigationDrawer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Drawer(
-          child: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.only(top: 60.0),
-          child: Wrap(
-            runSpacing: 16,
-            children: <Widget>[
-              ListTile(
-                  leading: const Icon(Icons.logout),
-                  title: const Text('Log-out'),
-                  onTap: () async {
-                    await logout();
-                    // ignore: use_build_context_synchronously
-                    Navigator.of(context).pushAndRemoveUntil(
-                        MaterialPageRoute(builder: (context) => Login()),
-                        (route) => false);
-                  }),
-              ListTile(
-                  leading: const Icon(Icons.logout),
-                  title: const Text('Log-out'),
-                  onTap: () async {
-                    await logout();
-                    // ignore: use_build_context_synchronously
-                    Navigator.of(context).pushAndRemoveUntil(
-                        MaterialPageRoute(builder: (context) => Login()),
-                        (route) => false);
-                  }),
-              ListTile(
-                  leading: const Icon(Icons.logout),
-                  title: const Text('Log-out'),
-                  onTap: () async {
-                    await logout();
-                    // ignore: use_build_context_synchronously
-                    Navigator.of(context).pushAndRemoveUntil(
-                        MaterialPageRoute(builder: (context) => Login()),
-                        (route) => false);
-                  }),
-            ],
-          ),
+          child: Container(
+        color: Color.fromARGB(255, 35, 155, 88),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // ignore: prefer_const_constructors
+            Padding(
+              padding: const EdgeInsets.only(top: 50.0),
+              child: const IconButton(
+                  onPressed: null,
+                  icon: Icon(Icons.menu,
+                      color: Color.fromARGB(255, 255, 255, 255))),
+            ),
+            Container(
+              padding: const EdgeInsets.only(top: 20.0, left: 15),
+              child: Row(
+                children: [
+                  Container(
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(50),
+                      child: SizedBox(
+                        child: Image.asset(
+                          'assets/profilepic.png',
+                        ),
+                        width: 70,
+                        height: 70,
+                      ),
+                    ),
+                    width: 70,
+                    height: 70,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(50),
+                      color: Colors.white,
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.white,
+                          blurRadius: 0,
+                          spreadRadius: 1,
+                          offset: const Offset(0, 0),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Container(
+                    margin: const EdgeInsets.only(left: 15),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text('Julious Babaw',
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                            )),
+                        Text('Active',
+                            style: TextStyle(
+                              fontWeight: FontWeight.normal,
+                              color: Colors.white,
+                            ))
+                      ],
+                    ),
+                  )
+                ],
+              ),
+            ),
+            Divider(
+              height: 40,
+              thickness: 1,
+              indent: 20,
+              endIndent: 20,
+              color: Color.fromARGB(255, 192, 190, 190),
+            ),
+            SingleChildScrollView(
+              child: Padding(
+                padding: const EdgeInsets.only(top: 10.0, left: 5),
+                child: Wrap(
+                  runSpacing: 16,
+                  children: <Widget>[
+                    ListTile(
+                        leading: const Icon(Icons.account_circle_outlined,
+                            color: Color.fromARGB(255, 255, 255, 255)),
+                        title: const Text('Profile',
+                            style: TextStyle(
+                              fontWeight: FontWeight.normal,
+                              color: Colors.white,
+                            )),
+                        onTap: () async {
+                          await logout();
+                          // ignore: use_build_context_synchronously
+                          Navigator.of(context).pushAndRemoveUntil(
+                              MaterialPageRoute(builder: (context) => Login()),
+                              (route) => false);
+                        }),
+                    ListTile(
+                        leading: const Icon(Icons.menu_book,
+                            color: Color.fromARGB(255, 255, 255, 255)),
+                        title: const Text('History',
+                            style: TextStyle(
+                              fontWeight: FontWeight.normal,
+                              color: Colors.white,
+                            )),
+                        onTap: () async {
+                          await logout();
+                          // ignore: use_build_context_synchronously
+                          Navigator.of(context).pushAndRemoveUntil(
+                              MaterialPageRoute(builder: (context) => Login()),
+                              (route) => false);
+                        }),
+                    ListTile(
+                        leading: const Icon(Icons.logout,
+                            color: Color.fromARGB(255, 255, 255, 255)),
+                        title: const Text('Log-out',
+                            style: TextStyle(
+                              fontWeight: FontWeight.normal,
+                              color: Colors.white,
+                            )),
+                        onTap: () async {
+                          await logout();
+                          // ignore: use_build_context_synchronously
+                          Navigator.of(context).pushAndRemoveUntil(
+                              MaterialPageRoute(builder: (context) => Login()),
+                              (route) => false);
+                        }),
+                  ],
+                ),
+              ),
+            ),
+          ],
         ),
       ));
 }
