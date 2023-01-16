@@ -173,8 +173,12 @@ void dispose() {
                   child: StreamBuilder<List<Terminal_driver>>(
                     stream: _streamController.stream,
                     builder: (context, AsyncSnapshot<List<Terminal_driver>> snapshot){
-                      if(snapshot.hasData){
-                      List<Terminal_driver> terminals = snapshot.data!;
+                      switch (snapshot.connectionState){
+                        case ConnectionState.waiting: return Center(child: CircularProgressIndicator(),);
+                        default: if(snapshot.hasError){
+                          return Text("Please wait....");
+                        }else{
+                          List<Terminal_driver> terminals = snapshot.data!;
                         return ListView.builder(
                           itemCount: terminals.length,
                           itemBuilder: (context, index){
@@ -202,10 +206,9 @@ void dispose() {
                                         //  onTap: ,
                                         ),
                                   );
-                          });
-                      }else{
-                        return  CircularProgressIndicator();
-                      };
+                            });
+                        }
+                      }
                     },
                   )
                 )
