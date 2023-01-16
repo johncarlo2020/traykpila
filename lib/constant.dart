@@ -22,6 +22,8 @@ const driverCount = baseUrl + '/driver/count';
 const terminalCreateNew = baseUrl + '/terminal/createNew';
 
 const terminalShow = baseUrl + '/terminal';
+const activeDriverTerminal = baseUrl + '/terminalDriver';
+
 
 
 //tricycle api

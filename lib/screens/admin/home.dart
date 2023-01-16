@@ -118,7 +118,6 @@ class _MyWidgetState extends State<Home> {
     String _host = 'https://maps.google.com/maps/api/geocode/json';
     String _key = 'AIzaSyDkvOCup04GujFtnVfUFxynfKATbXx0HFg';
 
-    print(loading);
     Location location = Location();
 
     location.getLocation().then(
@@ -133,9 +132,7 @@ class _MyWidgetState extends State<Home> {
           if (response.statusCode == 200) {
             Map data = jsonDecode(response.body);
             String _formattedAddress = data["results"][0]["formatted_address"];
-            print("response ==== $_formattedAddress");
             txtAdress.text = _formattedAddress;
-            print(_formattedAddress);
           } else
             print(null);
         } else

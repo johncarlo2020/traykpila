@@ -60,8 +60,6 @@ class _LoginState extends State<Login> {
     String role = await getRoleLogin();
     String token = await getToken();
 
-    print(role);
-
     if (role == '1') {
       // ignore: use_build_context_synchronously
       Navigator.of(context).pushAndRemoveUntil(

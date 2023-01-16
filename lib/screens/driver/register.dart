@@ -37,7 +37,6 @@ class _RegisterState extends State<Register> {
       if (pickedFile != null) {
         _image = File(pickedFile.path);
         imageClick = 1;
-        print(_image.path);
       } else {
         print('No image selected.');
       }

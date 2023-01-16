@@ -7,12 +7,13 @@ import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
 import 'package:http/http.dart' as http;
+import 'package:traykpila/models/terminal_driver.dart';
 import 'package:traykpila/screens/passenger/details.dart' as Details;
 
 import '../../constant.dart';
 import '../../services/user_service.dart';
 import 'login.dart';
-import 'package:traykpila/models/terminal.dart';
+import 'package:traykpila/models/terminal_driver.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -24,33 +25,41 @@ class Home extends StatefulWidget {
 class _MyWidgetState extends State<Home> {
   final Completer<GoogleMapController> _controller = Completer();
   bool loading = false;
-
+  Timer? timer;
   List<LatLng> polylineCoordinates = [];
   LocationData? currentLocation;
 
-  Future<List<Terminal>> getTerminals() async {
+  StreamController<List<Terminal_driver>> _streamController = StreamController();
+
+  Future<void> getTerminals() async {
     String token = await getToken();
 
-    final response = await http.post(Uri.parse(terminalShow), headers: {
+    final response = await http.post(Uri.parse(activeDriverTerminal), headers: {
       'Accept': 'application/json',
       'Authorization': 'Bearer $token'
     });
 
     var jsonData = jsonDecode(response.body);
     var jsonArray = jsonData['terminals'];
-    List<Terminal> terminals = [];
+    print(jsonArray);
 
+     List<Terminal_driver> terminals = [];
+    
     for (var jsonTerminal in jsonArray) {
-      Terminal terminal = Terminal(
+      Terminal_driver terminal = Terminal_driver(
           id: jsonTerminal['id'],
           name: jsonTerminal['name'],
           address: jsonTerminal['address'],
           image: jsonTerminal['image'],
           lat: jsonTerminal['lat'],
-          lng: jsonTerminal['lng']);
+          lng: jsonTerminal['lng'],
+          count: jsonTerminal['count']);
+
       terminals.add(terminal);
+
     }
-    return terminals;
+    _streamController.sink.add(terminals);
+
   }
 
   signOut() async {
@@ -72,12 +81,25 @@ class _MyWidgetState extends State<Home> {
     );
   }
 
+
+
   @override
   void initState() {
     loading = true;
     getCurrentLocation();
     super.initState();
+    Timer.periodic(Duration(seconds: 1), (timer) {
+      getTerminals();
+     });
+    
+
   }
+
+  @override
+void dispose() {
+  _streamController.close();
+}
+
 
   @override
   Widget build(BuildContext context) {
@@ -148,45 +170,44 @@ class _MyWidgetState extends State<Home> {
                   color: Color.fromARGB(255, 49, 241, 129),
                 ),
                 Expanded(
-                  child: FutureBuilder<List<Terminal>>(
-                      future: getTerminals(),
-                      builder: (context, snapshot) {
-                        if (snapshot.data == null) {
-                          return Center(
-                            child: CircularProgressIndicator(),
-                          );
-                        } else {
-                          List<Terminal> terminals = snapshot.data!;
-                          return ListView.builder(
-                              itemCount: terminals.length,
-                              itemBuilder: (context, index) {
-                                Terminal terminal = terminals[index];
-                                return Card(
-                                  child: ListTile(
-                                      leading: Icon(
-                                        Icons.map,
-                                        size: 30.0,
-                                        color:
-                                            Color.fromARGB(255, 72, 206, 133),
-                                      ),
-                                      title: Text(terminal.name.toString()),
-                                      subtitle:
-                                          Text(terminal.address.toString()),
-                                      trailing: Text('Book'),
-                                      onTap: () {
-                                        Navigator.of(context)
-                                            .pushAndRemoveUntil(
-                                                MaterialPageRoute(
-                                                    builder: (context) =>
-                                                        Details.Details()),
-                                                (route) => false);
-                                      }
-                                      //  onTap: ,
-                                      ),
-                                );
-                              });
-                        }
-                      }),
+                  child: StreamBuilder<List<Terminal_driver>>(
+                    stream: _streamController.stream,
+                    builder: (context, AsyncSnapshot<List<Terminal_driver>> snapshot){
+                      if(snapshot.hasData){
+                      List<Terminal_driver> terminals = snapshot.data!;
+                        return ListView.builder(
+                          itemCount: terminals.length,
+                          itemBuilder: (context, index){
+                             Terminal_driver terminal = terminals[index];
+                              return Card(
+                                    child: ListTile(
+                                        leading: Icon(
+                                          Icons.map,
+                                          size: 30.0,
+                                          color:
+                                              Color.fromARGB(255, 72, 206, 133),
+                                        ),
+                                        title: Text(terminal.name.toString()+" : "+terminal.count.toString()+" Driver"),
+                                        subtitle:
+                                            Text(terminal.address.toString()),
+                                        trailing: Text('Book'),
+                                        onTap: () {
+                                          Navigator.of(context)
+                                              .pushAndRemoveUntil(
+                                                  MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          Details.Details()),
+                                                  (route) => false);
+                                        }
+                                        //  onTap: ,
+                                        ),
+                                  );
+                          });
+                      }else{
+                        return  CircularProgressIndicator();
+                      };
+                    },
+                  )
                 )
               ],
             )),

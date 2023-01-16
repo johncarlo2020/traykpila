@@ -77,7 +77,6 @@ class _MyWidgetState extends State<Home> {
     String token = await getToken();
     int userId = await getUserId();
 
-  print(tricycleShow);
     final response = await http.post(Uri.parse(tricycleShow), 
      headers: {
       'Accept': 'application/json',
@@ -86,10 +85,8 @@ class _MyWidgetState extends State<Home> {
         body: {'user_id': userId.toString()}
     );
 
-    print(response.body);
     var jsonData = jsonDecode(response.body);
     var jsonArray = jsonData['tricycle'];
-    print(jsonArray.toString());
     List<Tricycle> tricycles = [];
 
     for (var jsonTricycle in jsonArray) {
@@ -142,7 +139,6 @@ class _MyWidgetState extends State<Home> {
         } else {
           image = imageBaseUrl + userimage;
         }
-        print(image);
       });
     } else if (response.error == unauthorized) {
       logout().then((value) => {

@@ -34,7 +34,6 @@ class _RegisterState extends State<Register> {
 
   void _registerUser() async {
     String role = await getRole();
-    print(role);
     ApiResponse response = await register(
         txtName.text, txtEmail.text, txtPassword.text, role, txtAdress.text);
 

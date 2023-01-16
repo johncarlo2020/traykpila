@@ -39,13 +39,11 @@ Future<ApiResponse> TerminalAdd(String name,String address,String lat,String lng
         apiResponse.error = unauthorized;
         break;
       default:
-        print(response.body);
         apiResponse.error = somethingWentWrong;
         break;
     }
   }
   catch (e){
-    print(e.toString());
     apiResponse.error = serverError;
   }
   return apiResponse;
@@ -79,13 +77,11 @@ Future<ApiResponse> addTricycle(String name,String plate_number,String body_numb
         apiResponse.error = unauthorized;
         break;
       default:
-        print(response.body);
         apiResponse.error = somethingWentWrong;
         break;
     }
   }
   catch (e){
-    print(e.toString());
     apiResponse.error = serverError;
   }
   return apiResponse;
@@ -136,11 +132,9 @@ Future<ApiResponse> active_driver(String user_id, String terminal_id, String tri
           'tricycle_id': tricycle_id,
           'active': active
           });
-      print(response.statusCode);
 
     switch (response.statusCode) {
       case 200:
-        print(200);
         break;
       case 422:
         final errors = jsonDecode(response.body)['errors'];
@@ -154,7 +148,6 @@ Future<ApiResponse> active_driver(String user_id, String terminal_id, String tri
         break;
     }
   } catch (e) {
-    print(e.toString());
     apiResponse.error = serverError;
   }
   return apiResponse;
