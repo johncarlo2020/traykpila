@@ -30,9 +30,8 @@ class _MyWidgetState extends State<Home> {
   late String lat;
   late String lng;
   late String address;
- final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey =
+  final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey =
       GlobalKey<RefreshIndicatorState>();
-
 
   List<LatLng> polylineCoordinates = [];
   LocationData? currentLocation;
@@ -48,8 +47,8 @@ class _MyWidgetState extends State<Home> {
     var jsonData = jsonDecode(response.body);
     var jsonArray = jsonData['terminals'];
 
-     List<Terminal_driver> terminals = [];
-    
+    List<Terminal_driver> terminals = [];
+
     for (var jsonTerminal in jsonArray) {
       Terminal_driver terminal = Terminal_driver(
           id: jsonTerminal['id'],
@@ -61,38 +60,31 @@ class _MyWidgetState extends State<Home> {
           count: jsonTerminal['count']);
 
       terminals.add(terminal);
-
     }
     return terminals;
-
   }
 
- 
   signOut() async {
     await logout();
     Navigator.of(context).pushAndRemoveUntil(
         MaterialPageRoute(builder: (context) => Login()), (route) => false);
   }
 
-
-
   void passenger_booking(String Terminal_id) async {
     int userId = await getUserId();
-    
+
     String _host = 'https://maps.google.com/maps/api/geocode/json';
     String _key = 'AIzaSyDkvOCup04GujFtnVfUFxynfKATbXx0HFg';
-    
 
     Location location = Location();
 
     location.getLocation().then(
       (location) async {
         currentLocation = location;
-          lat = currentLocation!.latitude!.toString();
-         lng = currentLocation!.longitude!.toString();
-         
+        lat = currentLocation!.latitude!.toString();
+        lng = currentLocation!.longitude!.toString();
 
-           final url = '$_host?key=$_key&language=en&latlng=$lat,$lng';
+        final url = '$_host?key=$_key&language=en&latlng=$lat,$lng';
         if (lng != null) {
           var response = await http.get(Uri.parse(url));
           if (response.statusCode == 200) {
@@ -102,30 +94,20 @@ class _MyWidgetState extends State<Home> {
             print(null);
         } else
           print(null);
-       
-        
       },
     );
     print(address);
 
-    ApiResponse response = await passengerBooking(userId.toString(), lat.toString(), lng.toString(),'3',Terminal_id,'0',address);
+    ApiResponse response = await passengerBooking(userId.toString(),
+        lat.toString(), lng.toString(), '3', Terminal_id, '0', address);
     if (response.error == null) {
-    ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text('Booking Succesful, Wait for your driver')));
-        
+      ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Booking Succesful, Wait for your driver')));
     } else {
-          ScaffoldMessenger.of(context)
+      ScaffoldMessenger.of(context)
           .showSnackBar(SnackBar(content: Text('${response.error}')));
-     
     }
-
-
   }
-  
-
-
-
-
 
   @override
   void initState() {
@@ -133,31 +115,32 @@ class _MyWidgetState extends State<Home> {
     super.initState();
   }
 
-  Widget Terminal(terminals)=>(
-    ListView.builder(
-                              itemCount: terminals.length,
-                              itemBuilder: (context, index){
-                                 Terminal_driver terminal = terminals[index];
-                                  return Card(
-                                        child: ListTile(
-                                            leading: Icon(
-                                              Icons.map,
-                                              size: 30.0,
-                                              color:
-                                                  Color.fromARGB(255, 72, 206, 133),
-                                            ),
-                                            title: Text(terminal.name.toString()+" : "+terminal.count.toString()+" Driver"),
-                                            subtitle:
-                                                Text(terminal.address.toString()),
-                                            trailing: Text('Book'),
-                                            onTap: () {
-                                             passenger_booking(terminal.id.toString());
-                                            }
-                                            //  onTap: ,
-                                            ),
-                                      );
-                                })
-  );
+  Widget Terminal(terminals) => (ListView.builder(
+      itemCount: terminals.length,
+      itemBuilder: (context, index) {
+        Terminal_driver terminal = terminals[index];
+        return Card(
+          child: ListTile(
+              leading: Icon(
+                Icons.map,
+                size: 30.0,
+                color: Color.fromARGB(255, 72, 206, 133),
+              ),
+              title: Flexible(
+                child: Text(terminal.name.toString() +
+                    " : " +
+                    terminal.count.toString() +
+                    " Driver"),
+              ),
+              subtitle: Flexible(child: Text(terminal.address.toString())),
+              trailing: Text('Book'),
+              onTap: () {
+                passenger_booking(terminal.id.toString());
+              }
+              //  onTap: ,
+              ),
+        );
+      }));
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -172,92 +155,92 @@ class _MyWidgetState extends State<Home> {
           elevation: 2,
         ),
         drawer: NavigationDrawer(),
-        body: Padding(
-          padding: const EdgeInsets.only(top: 10.0),
+        body: SingleChildScrollView(
           child: Padding(
-            padding: const EdgeInsets.all(20.0),
-            child: (Column(
-              children: [
-                // Generated code for this Row Widget...
-                Row(
-                  mainAxisSize: MainAxisSize.max,
-                  children: [
-                    Padding(
-                      padding: EdgeInsetsDirectional.fromSTEB(20, 0, 0, 0),
-                      child: Text(
-                        'Need a Tricycle?\nBook Now!',
-                        style: TextStyle(
-                          fontFamily: 'Poppins',
-                          color: Color(0xFF069E1C),
-                          fontSize: 25,
+            padding: const EdgeInsets.only(top: 10.0),
+            child: Padding(
+              padding: const EdgeInsets.all(20.0),
+              child: (Column(
+                children: [
+                  // Generated code for this Row Widget...
+                  Row(
+                    mainAxisSize: MainAxisSize.max,
+                    children: [
+                      Padding(
+                        padding: EdgeInsetsDirectional.fromSTEB(20, 0, 0, 0),
+                        child: Text(
+                          'Need a Tricycle?\nBook Now!',
+                          style: TextStyle(
+                            fontFamily: 'Poppins',
+                            color: Color(0xFF069E1C),
+                            fontSize: 25,
+                          ),
                         ),
                       ),
-                    ),
-                    Padding(
-                      padding: EdgeInsetsDirectional.fromSTEB(30, 0, 0, 0),
-                      child: Image.asset(
-                        'assets/trayklogo.png',
-                        width: 100,
-                        height: 100,
-                        fit: BoxFit.cover,
+                      Padding(
+                        padding: EdgeInsetsDirectional.fromSTEB(30, 0, 0, 0),
+                        child: Image.asset(
+                          'assets/trayklogo.png',
+                          width: 100,
+                          height: 100,
+                          fit: BoxFit.cover,
+                        ),
                       ),
-                    ),
-                  ],
-                ),
-
-                TextFormField(
-                  validator: (val) => val!.isEmpty ? 'Invalid Name' : null,
-                  // ignore: prefer_const_constructors
-                  decoration: InputDecoration(
-                      isDense: true,
-                      labelText: 'Search Terminal',
-                      border: InputBorder.none,
-                      filled: true,
-                      fillColor: const Color.fromRGBO(229, 255, 238, 1.0),
-                      prefixIcon: const Icon(
-                        Icons.search_outlined,
-                        size: 30,
-                      )),
-                ),
-                const Divider(
-                  height: 20,
-                  thickness: 2,
-                  indent: 0,
-                  endIndent: 0,
-                  color: Color.fromARGB(255, 49, 241, 129),
-                ),
-                RefreshIndicator(
-                  key: _refreshIndicatorKey,
-                  color: Colors.white,
-                  backgroundColor: Colors.blue,
-                  strokeWidth: 4.0,
-                  onRefresh:() async {
-                    setState(() {
-                    getTerminals();
-                    });
-                    
-                  } ,
-                  child: Container(
-                    height: 500,
-                    child: Expanded(
-                      child:FutureBuilder<List<Terminal_driver>>(
-                        future:getTerminals(),
-                        builder: (context, snapshot ){
-                          if (snapshot.data == null) {
-                        return const Center(
-                          child: CircularProgressIndicator(),
-                        );
-                      }else{
-                        List<Terminal_driver> terminals = snapshot.data!;
-                        return Terminal(terminals);
-                      }
-                        },
-                        )
-                    ),
+                    ],
                   ),
-                )
-              ],
-            )),
+
+                  TextFormField(
+                    validator: (val) => val!.isEmpty ? 'Invalid Name' : null,
+                    // ignore: prefer_const_constructors
+                    decoration: InputDecoration(
+                        isDense: true,
+                        labelText: 'Search Terminal',
+                        border: InputBorder.none,
+                        filled: true,
+                        fillColor: const Color.fromRGBO(229, 255, 238, 1.0),
+                        prefixIcon: const Icon(
+                          Icons.search_outlined,
+                          size: 30,
+                        )),
+                  ),
+                  const Divider(
+                    height: 20,
+                    thickness: 2,
+                    indent: 0,
+                    endIndent: 0,
+                    color: Color.fromARGB(255, 49, 241, 129),
+                  ),
+                  RefreshIndicator(
+                    key: _refreshIndicatorKey,
+                    color: Colors.white,
+                    backgroundColor: Colors.blue,
+                    strokeWidth: 4.0,
+                    onRefresh: () async {
+                      setState(() {
+                        getTerminals();
+                      });
+                    },
+                    child: Container(
+                      height: 500,
+                      child: Expanded(
+                          child: FutureBuilder<List<Terminal_driver>>(
+                        future: getTerminals(),
+                        builder: (context, snapshot) {
+                          if (snapshot.data == null) {
+                            return const Center(
+                              child: CircularProgressIndicator(),
+                            );
+                          } else {
+                            List<Terminal_driver> terminals = snapshot.data!;
+                            return Terminal(terminals);
+                          }
+                        },
+                      )),
+                    ),
+                  )
+                ],
+              )),
+            ),
           ),
         ));
   }
