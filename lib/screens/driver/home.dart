@@ -4,7 +4,6 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
@@ -16,10 +15,9 @@ import '../../services/user_service.dart';
 import '../login.dart';
 import 'register.dart';
 import 'package:traykpila/models/terminal.dart';
+import 'package:traykpila/models/booking.dart';
 import 'package:traykpila/models/tricycle.dart';
 import '../../models/user.dart';
-import '../../constant.dart';
-
 class Home extends StatefulWidget {
   const Home({super.key});
 
@@ -29,23 +27,25 @@ class Home extends StatefulWidget {
 
 class _MyWidgetState extends State<Home> {
   final Completer<GoogleMapController> _controller = Completer();
+   final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey =
+      GlobalKey<RefreshIndicatorState>();
+
   bool loading = false;
   User? user;
-
   List<LatLng> polylineCoordinates = [];
   LocationData? currentLocation;
+  late int currentTerminal_id;
 
   String currentTerminal = '';
   String username = '';
   String image = '';
   String email = '';
-
   String Tryk_name='';
   String Tryk_image='';
   String Tryk_id='';
+
   int active = 0;
 
-  late int currentTerminal_id;
 
   Future<List<Terminal>> getTerminals() async {
     String token = await getToken();
@@ -73,10 +73,8 @@ class _MyWidgetState extends State<Home> {
   }
 
    Future<List<Tricycle>> getTricycle() async {
-
     String token = await getToken();
     int userId = await getUserId();
-
     final response = await http.post(Uri.parse(tricycleShow), 
      headers: {
       'Accept': 'application/json',
@@ -84,11 +82,9 @@ class _MyWidgetState extends State<Home> {
     },
         body: {'user_id': userId.toString()}
     );
-
     var jsonData = jsonDecode(response.body);
     var jsonArray = jsonData['tricycle'];
     List<Tricycle> tricycles = [];
-
     for (var jsonTricycle in jsonArray) {
       Tricycle tricycle = Tricycle(
           id: jsonTricycle['id'],
@@ -101,9 +97,35 @@ class _MyWidgetState extends State<Home> {
           );
       tricycles.add(tricycle);
     }
-
     return tricycles;
   }
+
+    Future<List<Booking>> DriverBookingList() async{
+    final response = await http.post(Uri.parse(driverBookingList), 
+     body: {
+          'terminal_id': currentTerminal_id.toString(),
+          });
+    var jsonData = jsonDecode(response.body);
+    var jsonArray = jsonData['booking'];
+
+     List<Booking> bookings = [];
+    for (var jsonBooking in jsonArray) {
+
+      Booking booking = Booking(
+
+          id: jsonBooking['id'],
+          name:jsonBooking['name'],
+          passenger_location: jsonBooking['passenger_location'],
+          passenger_count: jsonBooking['passenger_count']
+          );
+
+      bookings.add(booking);
+
+    }
+
+    return bookings;
+  }
+
 
   signOut() async {
     await logout();
@@ -114,7 +136,6 @@ class _MyWidgetState extends State<Home> {
 
   void getCurrentLocation() {
     Location location = Location();
-
     location.getLocation().then(
       (location) {
         setState(() {
@@ -162,7 +183,6 @@ class _MyWidgetState extends State<Home> {
 
   void ActiveClick() async{
     int user_id = await getUserId();
-
     ApiResponse response = await active_driver(user_id.toString(), currentTerminal_id.toString(), Tryk_id,'1');
     if (response.error == null) {
     ScaffoldMessenger.of(context)
@@ -175,16 +195,15 @@ class _MyWidgetState extends State<Home> {
     } else {
           ScaffoldMessenger.of(context)
           .showSnackBar(SnackBar(content: Text('${response.error}')));
-     
     }
      setState(() {
       active=1;
       });
   }
 
+
   void InactiveClick() async{
     int user_id = await getUserId();
-
     ApiResponse response = await active_driver(user_id.toString(), currentTerminal_id.toString(), Tryk_id,'0');
     if (response.error == null) {
     ScaffoldMessenger.of(context)
@@ -196,21 +215,106 @@ class _MyWidgetState extends State<Home> {
     } else {
           ScaffoldMessenger.of(context)
           .showSnackBar(SnackBar(content: Text('${response.error}')));
-     
     }
-
     setState(() {
       active=0;
-                  });
+      });
   }
 
   @override
   void initState() {
     loading = true;
     getUser();
-    getCurrentLocation();
+    getCurrentLocation(); 
     super.initState();
   }
+
+
+  Widget DriverTerminal(String Name, String passenger_location, String passenger_count) => ( 
+    active == 1 ? 
+    Container(
+                    decoration: new BoxDecoration(
+                      boxShadow: [
+                        BoxShadow(
+                          color: Color.fromARGB(255, 151, 170, 159)
+                              .withOpacity(.5),
+                          blurRadius: 20.0, // soften the shadow
+                          spreadRadius: 0.0, //extend the shadow
+                          offset: Offset(
+                            5.0, // Move to right 10  horizontally
+                            5.0, // Move to bottom 10 Vertically
+                          ),
+                        )
+                      ],
+                    ),
+                    child: Card(
+                      shape: RoundedRectangleBorder(
+                        side: BorderSide(
+                          color: Colors.green.shade300,
+                        ),
+                        borderRadius: BorderRadius.circular(5.0),
+                      ),
+                      child: ListTile(
+                          contentPadding: EdgeInsets.only(
+                              top: 15, bottom: 15, left: 35, right: 35),
+                          horizontalTitleGap: 10.0,
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(5)),
+                          tileColor: Color.fromARGB(255, 255, 255, 255),
+                          title: Container(
+                            child: Column(
+                              children: [
+                                Row(
+                                  children: [
+                                    Icon(Icons.gps_fixed),
+                                    Text(
+                                        passenger_location,
+                                        style: TextStyle(
+                                            fontSize: 13,
+                                            color: Color.fromARGB(
+                                                255, 6, 149, 52)))
+                                  ],
+                                ),
+                                SizedBox(
+                                  height: 20,
+                                ),
+                               
+                                const Divider(
+                                  height: 25,
+                                  thickness: 1,
+                                  indent: 0,
+                                  endIndent: 0,
+                                  color: Color.fromARGB(255, 65, 220, 135),
+                                ),
+                                Container(
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text(Name,
+                                          textAlign: TextAlign.left,
+                                          style: TextStyle(
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.bold,
+                                              color: Color.fromARGB(
+                                                  255, 0, 0, 0))),
+                                      Text("Count : "+passenger_count,
+                                          textAlign: TextAlign.left,
+                                          style: TextStyle(
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.bold,
+                                              color:
+                                                  Color.fromARGB(255, 0, 0, 0)))
+                                    ],
+                                  ),
+                                )
+                              ],
+                            ),
+                          ),
+                          onTap: () {/* react to the tile being tapped */}),
+                    ),
+                  ):Text("Please set your status to active first"));
+
 
   @override
   Widget build(BuildContext context) {
@@ -616,1026 +720,42 @@ class _MyWidgetState extends State<Home> {
                           fontWeight: FontWeight.bold,
                           color: Color.fromARGB(255, 0, 0, 0))),
                 )),
-            Expanded(
-              child: ListView(
-                padding: const EdgeInsets.all(8),
-                children: <Widget>[
-                  Container(
-                    decoration: new BoxDecoration(
-                      boxShadow: [
-                        BoxShadow(
-                          color: Color.fromARGB(255, 151, 170, 159)
-                              .withOpacity(.5),
-                          blurRadius: 20.0, // soften the shadow
-                          spreadRadius: 0.0, //extend the shadow
-                          offset: Offset(
-                            5.0, // Move to right 10  horizontally
-                            5.0, // Move to bottom 10 Vertically
-                          ),
-                        )
-                      ],
-                    ),
-                    child: Card(
-                      shape: RoundedRectangleBorder(
-                        side: BorderSide(
-                          color: Colors.green.shade300,
-                        ),
-                        borderRadius: BorderRadius.circular(5.0),
+            RefreshIndicator(
+              key: _refreshIndicatorKey,
+                  color: Colors.white,
+                  backgroundColor: Colors.blue,
+                  strokeWidth: 4.0,
+                  onRefresh:() async {
+                    setState(() {
+                    DriverBookingList();
+                    });
+                    
+                  } ,
+              child: Container(
+                    height: 500,
+                child: Expanded(
+                       child: FutureBuilder<List<Booking>>(
+                        future: DriverBookingList(),
+                        builder: (context,snapshot){
+                          if(snapshot.data == null){
+                            return const Center(
+                              child: CircularProgressIndicator(),
+                            );
+                          }else{
+                            List<Booking> bookings = snapshot.data!;
+            
+                            return ListView.builder(
+                              itemCount: bookings.length,
+                              itemBuilder: (context, index){
+                                 Booking booking = bookings[index];
+                                  return DriverTerminal(booking.name.toString(),booking.passenger_location.toString(),booking.passenger_count.toString());
+                                });
+                          }
+                            }
                       ),
-                      child: ListTile(
-                          contentPadding: EdgeInsets.only(
-                              top: 15, bottom: 15, left: 35, right: 35),
-                          horizontalTitleGap: 10.0,
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(5)),
-                          tileColor: Color.fromARGB(255, 255, 255, 255),
-                          title: Container(
-                            child: Column(
-                              children: [
-                                Row(
-                                  children: [
-                                    Icon(Icons.gps_fixed),
-                                    Text(
-                                        "  6th St. TODA (GREEN TRICYCLE TERMINAL)",
-                                        style: TextStyle(
-                                            fontSize: 13,
-                                            color: Color.fromARGB(
-                                                255, 6, 149, 52)))
-                                  ],
-                                ),
-                                SizedBox(
-                                  height: 20,
-                                ),
-                                Row(
-                                  children: [
-                                    Icon(Icons.add_location_alt),
-                                    Text(
-                                        "  6th St. TODA (GREEN TRICYCLE TERMINAL)",
-                                        style: TextStyle(
-                                            fontSize: 13,
-                                            color:
-                                                Color.fromARGB(255, 6, 122, 0)))
-                                  ],
-                                ),
-                                const Divider(
-                                  height: 25,
-                                  thickness: 1,
-                                  indent: 0,
-                                  endIndent: 0,
-                                  color: Color.fromARGB(255, 65, 220, 135),
-                                ),
-                                Container(
-                                  child: Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Text("Jhon lomero",
-                                          textAlign: TextAlign.left,
-                                          style: TextStyle(
-                                              fontSize: 16,
-                                              fontWeight: FontWeight.bold,
-                                              color: Color.fromARGB(
-                                                  255, 0, 0, 0))),
-                                      Text("Count : 3",
-                                          textAlign: TextAlign.left,
-                                          style: TextStyle(
-                                              fontSize: 16,
-                                              fontWeight: FontWeight.bold,
-                                              color:
-                                                  Color.fromARGB(255, 0, 0, 0)))
-                                    ],
-                                  ),
-                                )
-                              ],
-                            ),
-                          ),
-                          onTap: () {/* react to the tile being tapped */}),
-                    ),
-                  ),
-                  Container(
-                    decoration: new BoxDecoration(
-                      boxShadow: [
-                        BoxShadow(
-                          color: Color.fromARGB(255, 151, 170, 159)
-                              .withOpacity(.5),
-                          blurRadius: 20.0, // soften the shadow
-                          spreadRadius: 0.0, //extend the shadow
-                          offset: Offset(
-                            5.0, // Move to right 10  horizontally
-                            5.0, // Move to bottom 10 Vertically
-                          ),
-                        )
-                      ],
-                    ),
-                    child: Card(
-                      shape: RoundedRectangleBorder(
-                        side: BorderSide(
-                          color: Colors.green.shade300,
-                        ),
-                        borderRadius: BorderRadius.circular(5.0),
                       ),
-                      child: ListTile(
-                          contentPadding: EdgeInsets.only(
-                              top: 15, bottom: 15, left: 35, right: 35),
-                          horizontalTitleGap: 10.0,
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(5)),
-                          tileColor: Color.fromARGB(255, 255, 255, 255),
-                          title: Container(
-                            child: Column(
-                              children: [
-                                Row(
-                                  children: [
-                                    Icon(Icons.gps_fixed),
-                                    Text(
-                                        "  6th St. TODA (GREEN TRICYCLE TERMINAL)",
-                                        style: TextStyle(
-                                            fontSize: 13,
-                                            color: Color.fromARGB(
-                                                255, 6, 149, 52)))
-                                  ],
-                                ),
-                                SizedBox(
-                                  height: 20,
-                                ),
-                                Row(
-                                  children: [
-                                    Icon(Icons.add_location_alt),
-                                    Text(
-                                        "  6th St. TODA (GREEN TRICYCLE TERMINAL)",
-                                        style: TextStyle(
-                                            fontSize: 13,
-                                            color:
-                                                Color.fromARGB(255, 6, 122, 0)))
-                                  ],
-                                ),
-                                const Divider(
-                                  height: 25,
-                                  thickness: 1,
-                                  indent: 0,
-                                  endIndent: 0,
-                                  color: Color.fromARGB(255, 65, 220, 135),
-                                ),
-                                Container(
-                                  child: Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Text("Jhon lomero",
-                                          textAlign: TextAlign.left,
-                                          style: TextStyle(
-                                              fontSize: 16,
-                                              fontWeight: FontWeight.bold,
-                                              color: Color.fromARGB(
-                                                  255, 0, 0, 0))),
-                                      Text("Count : 3",
-                                          textAlign: TextAlign.left,
-                                          style: TextStyle(
-                                              fontSize: 16,
-                                              fontWeight: FontWeight.bold,
-                                              color:
-                                                  Color.fromARGB(255, 0, 0, 0)))
-                                    ],
-                                  ),
-                                )
-                              ],
-                            ),
-                          ),
-                          onTap: () {/* react to the tile being tapped */}),
-                    ),
-                  ),
-                  Container(
-                    decoration: new BoxDecoration(
-                      boxShadow: [
-                        BoxShadow(
-                          color: Color.fromARGB(255, 151, 170, 159)
-                              .withOpacity(.5),
-                          blurRadius: 20.0, // soften the shadow
-                          spreadRadius: 0.0, //extend the shadow
-                          offset: Offset(
-                            5.0, // Move to right 10  horizontally
-                            5.0, // Move to bottom 10 Vertically
-                          ),
-                        )
-                      ],
-                    ),
-                    child: Card(
-                      shape: RoundedRectangleBorder(
-                        side: BorderSide(
-                          color: Colors.green.shade300,
-                        ),
-                        borderRadius: BorderRadius.circular(5.0),
-                      ),
-                      child: ListTile(
-                          contentPadding: EdgeInsets.only(
-                              top: 15, bottom: 15, left: 35, right: 35),
-                          horizontalTitleGap: 10.0,
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(5)),
-                          tileColor: Color.fromARGB(255, 255, 255, 255),
-                          title: Container(
-                            child: Column(
-                              children: [
-                                Row(
-                                  children: [
-                                    Icon(Icons.gps_fixed),
-                                    Text(
-                                        "  6th St. TODA (GREEN TRICYCLE TERMINAL)",
-                                        style: TextStyle(
-                                            fontSize: 13,
-                                            color: Color.fromARGB(
-                                                255, 6, 149, 52)))
-                                  ],
-                                ),
-                                SizedBox(
-                                  height: 20,
-                                ),
-                                Row(
-                                  children: [
-                                    Icon(Icons.add_location_alt),
-                                    Text(
-                                        "  6th St. TODA (GREEN TRICYCLE TERMINAL)",
-                                        style: TextStyle(
-                                            fontSize: 13,
-                                            color:
-                                                Color.fromARGB(255, 6, 122, 0)))
-                                  ],
-                                ),
-                                const Divider(
-                                  height: 25,
-                                  thickness: 1,
-                                  indent: 0,
-                                  endIndent: 0,
-                                  color: Color.fromARGB(255, 65, 220, 135),
-                                ),
-                                Container(
-                                  child: Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Text("Jhon lomero",
-                                          textAlign: TextAlign.left,
-                                          style: TextStyle(
-                                              fontSize: 16,
-                                              fontWeight: FontWeight.bold,
-                                              color: Color.fromARGB(
-                                                  255, 0, 0, 0))),
-                                      Text("Count : 3",
-                                          textAlign: TextAlign.left,
-                                          style: TextStyle(
-                                              fontSize: 16,
-                                              fontWeight: FontWeight.bold,
-                                              color:
-                                                  Color.fromARGB(255, 0, 0, 0)))
-                                    ],
-                                  ),
-                                )
-                              ],
-                            ),
-                          ),
-                          onTap: () {/* react to the tile being tapped */}),
-                    ),
-                  ),
-                  Container(
-                    decoration: new BoxDecoration(
-                      boxShadow: [
-                        BoxShadow(
-                          color: Color.fromARGB(255, 151, 170, 159)
-                              .withOpacity(.5),
-                          blurRadius: 20.0, // soften the shadow
-                          spreadRadius: 0.0, //extend the shadow
-                          offset: Offset(
-                            5.0, // Move to right 10  horizontally
-                            5.0, // Move to bottom 10 Vertically
-                          ),
-                        )
-                      ],
-                    ),
-                    child: Card(
-                      shape: RoundedRectangleBorder(
-                        side: BorderSide(
-                          color: Colors.green.shade300,
-                        ),
-                        borderRadius: BorderRadius.circular(5.0),
-                      ),
-                      child: ListTile(
-                          contentPadding: EdgeInsets.only(
-                              top: 15, bottom: 15, left: 35, right: 35),
-                          horizontalTitleGap: 10.0,
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(5)),
-                          tileColor: Color.fromARGB(255, 255, 255, 255),
-                          title: Container(
-                            child: Column(
-                              children: [
-                                Row(
-                                  children: [
-                                    Icon(Icons.gps_fixed),
-                                    Text(
-                                        "  6th St. TODA (GREEN TRICYCLE TERMINAL)",
-                                        style: TextStyle(
-                                            fontSize: 13,
-                                            color: Color.fromARGB(
-                                                255, 6, 149, 52)))
-                                  ],
-                                ),
-                                SizedBox(
-                                  height: 20,
-                                ),
-                                Row(
-                                  children: [
-                                    Icon(Icons.add_location_alt),
-                                    Text(
-                                        "  6th St. TODA (GREEN TRICYCLE TERMINAL)",
-                                        style: TextStyle(
-                                            fontSize: 13,
-                                            color:
-                                                Color.fromARGB(255, 6, 122, 0)))
-                                  ],
-                                ),
-                                const Divider(
-                                  height: 25,
-                                  thickness: 1,
-                                  indent: 0,
-                                  endIndent: 0,
-                                  color: Color.fromARGB(255, 65, 220, 135),
-                                ),
-                                Container(
-                                  child: Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Text("Jhon lomero",
-                                          textAlign: TextAlign.left,
-                                          style: TextStyle(
-                                              fontSize: 16,
-                                              fontWeight: FontWeight.bold,
-                                              color: Color.fromARGB(
-                                                  255, 0, 0, 0))),
-                                      Text("Count : 3",
-                                          textAlign: TextAlign.left,
-                                          style: TextStyle(
-                                              fontSize: 16,
-                                              fontWeight: FontWeight.bold,
-                                              color:
-                                                  Color.fromARGB(255, 0, 0, 0)))
-                                    ],
-                                  ),
-                                )
-                              ],
-                            ),
-                          ),
-                          onTap: () {/* react to the tile being tapped */}),
-                    ),
-                  ),
-                  Container(
-                    decoration: new BoxDecoration(
-                      boxShadow: [
-                        BoxShadow(
-                          color: Color.fromARGB(255, 151, 170, 159)
-                              .withOpacity(.5),
-                          blurRadius: 20.0, // soften the shadow
-                          spreadRadius: 0.0, //extend the shadow
-                          offset: Offset(
-                            5.0, // Move to right 10  horizontally
-                            5.0, // Move to bottom 10 Vertically
-                          ),
-                        )
-                      ],
-                    ),
-                    child: Card(
-                      shape: RoundedRectangleBorder(
-                        side: BorderSide(
-                          color: Colors.green.shade300,
-                        ),
-                        borderRadius: BorderRadius.circular(5.0),
-                      ),
-                      child: ListTile(
-                          contentPadding: EdgeInsets.only(
-                              top: 15, bottom: 15, left: 35, right: 35),
-                          horizontalTitleGap: 10.0,
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(5)),
-                          tileColor: Color.fromARGB(255, 255, 255, 255),
-                          title: Container(
-                            child: Column(
-                              children: [
-                                Row(
-                                  children: [
-                                    Icon(Icons.gps_fixed),
-                                    Text(
-                                        "  6th St. TODA (GREEN TRICYCLE TERMINAL)",
-                                        style: TextStyle(
-                                            fontSize: 13,
-                                            color: Color.fromARGB(
-                                                255, 6, 149, 52)))
-                                  ],
-                                ),
-                                SizedBox(
-                                  height: 20,
-                                ),
-                                Row(
-                                  children: [
-                                    Icon(Icons.add_location_alt),
-                                    Text(
-                                        "  6th St. TODA (GREEN TRICYCLE TERMINAL)",
-                                        style: TextStyle(
-                                            fontSize: 13,
-                                            color:
-                                                Color.fromARGB(255, 6, 122, 0)))
-                                  ],
-                                ),
-                                const Divider(
-                                  height: 25,
-                                  thickness: 1,
-                                  indent: 0,
-                                  endIndent: 0,
-                                  color: Color.fromARGB(255, 65, 220, 135),
-                                ),
-                                Container(
-                                  child: Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Text("Jhon lomero",
-                                          textAlign: TextAlign.left,
-                                          style: TextStyle(
-                                              fontSize: 16,
-                                              fontWeight: FontWeight.bold,
-                                              color: Color.fromARGB(
-                                                  255, 0, 0, 0))),
-                                      Text("Count : 3",
-                                          textAlign: TextAlign.left,
-                                          style: TextStyle(
-                                              fontSize: 16,
-                                              fontWeight: FontWeight.bold,
-                                              color:
-                                                  Color.fromARGB(255, 0, 0, 0)))
-                                    ],
-                                  ),
-                                )
-                              ],
-                            ),
-                          ),
-                          onTap: () {/* react to the tile being tapped */}),
-                    ),
-                  ),
-                  Container(
-                    decoration: new BoxDecoration(
-                      boxShadow: [
-                        BoxShadow(
-                          color: Color.fromARGB(255, 151, 170, 159)
-                              .withOpacity(.5),
-                          blurRadius: 20.0, // soften the shadow
-                          spreadRadius: 0.0, //extend the shadow
-                          offset: Offset(
-                            5.0, // Move to right 10  horizontally
-                            5.0, // Move to bottom 10 Vertically
-                          ),
-                        )
-                      ],
-                    ),
-                    child: Card(
-                      shape: RoundedRectangleBorder(
-                        side: BorderSide(
-                          color: Colors.green.shade300,
-                        ),
-                        borderRadius: BorderRadius.circular(5.0),
-                      ),
-                      child: ListTile(
-                          contentPadding: EdgeInsets.only(
-                              top: 15, bottom: 15, left: 35, right: 35),
-                          horizontalTitleGap: 10.0,
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(5)),
-                          tileColor: Color.fromARGB(255, 255, 255, 255),
-                          title: Container(
-                            child: Column(
-                              children: [
-                                Row(
-                                  children: [
-                                    Icon(Icons.gps_fixed),
-                                    Text(
-                                        "  6th St. TODA (GREEN TRICYCLE TERMINAL)",
-                                        style: TextStyle(
-                                            fontSize: 13,
-                                            color: Color.fromARGB(
-                                                255, 6, 149, 52)))
-                                  ],
-                                ),
-                                SizedBox(
-                                  height: 20,
-                                ),
-                                Row(
-                                  children: [
-                                    Icon(Icons.add_location_alt),
-                                    Text(
-                                        "  6th St. TODA (GREEN TRICYCLE TERMINAL)",
-                                        style: TextStyle(
-                                            fontSize: 13,
-                                            color:
-                                                Color.fromARGB(255, 6, 122, 0)))
-                                  ],
-                                ),
-                                const Divider(
-                                  height: 25,
-                                  thickness: 1,
-                                  indent: 0,
-                                  endIndent: 0,
-                                  color: Color.fromARGB(255, 65, 220, 135),
-                                ),
-                                Container(
-                                  child: Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Text("Jhon lomero",
-                                          textAlign: TextAlign.left,
-                                          style: TextStyle(
-                                              fontSize: 16,
-                                              fontWeight: FontWeight.bold,
-                                              color: Color.fromARGB(
-                                                  255, 0, 0, 0))),
-                                      Text("Count : 3",
-                                          textAlign: TextAlign.left,
-                                          style: TextStyle(
-                                              fontSize: 16,
-                                              fontWeight: FontWeight.bold,
-                                              color:
-                                                  Color.fromARGB(255, 0, 0, 0)))
-                                    ],
-                                  ),
-                                )
-                              ],
-                            ),
-                          ),
-                          onTap: () {/* react to the tile being tapped */}),
-                    ),
-                  ),
-                  Container(
-                    decoration: new BoxDecoration(
-                      boxShadow: [
-                        BoxShadow(
-                          color: Color.fromARGB(255, 151, 170, 159)
-                              .withOpacity(.5),
-                          blurRadius: 20.0, // soften the shadow
-                          spreadRadius: 0.0, //extend the shadow
-                          offset: Offset(
-                            5.0, // Move to right 10  horizontally
-                            5.0, // Move to bottom 10 Vertically
-                          ),
-                        )
-                      ],
-                    ),
-                    child: Card(
-                      shape: RoundedRectangleBorder(
-                        side: BorderSide(
-                          color: Colors.green.shade300,
-                        ),
-                        borderRadius: BorderRadius.circular(5.0),
-                      ),
-                      child: ListTile(
-                          contentPadding: EdgeInsets.only(
-                              top: 15, bottom: 15, left: 35, right: 35),
-                          horizontalTitleGap: 10.0,
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(5)),
-                          tileColor: Color.fromARGB(255, 255, 255, 255),
-                          title: Container(
-                            child: Column(
-                              children: [
-                                Row(
-                                  children: [
-                                    Icon(Icons.gps_fixed),
-                                    Text(
-                                        "  6th St. TODA (GREEN TRICYCLE TERMINAL)",
-                                        style: TextStyle(
-                                            fontSize: 13,
-                                            color: Color.fromARGB(
-                                                255, 6, 149, 52)))
-                                  ],
-                                ),
-                                SizedBox(
-                                  height: 20,
-                                ),
-                                Row(
-                                  children: [
-                                    Icon(Icons.add_location_alt),
-                                    Text(
-                                        "  6th St. TODA (GREEN TRICYCLE TERMINAL)",
-                                        style: TextStyle(
-                                            fontSize: 13,
-                                            color:
-                                                Color.fromARGB(255, 6, 122, 0)))
-                                  ],
-                                ),
-                                const Divider(
-                                  height: 25,
-                                  thickness: 1,
-                                  indent: 0,
-                                  endIndent: 0,
-                                  color: Color.fromARGB(255, 65, 220, 135),
-                                ),
-                                Container(
-                                  child: Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Text("Jhon lomero",
-                                          textAlign: TextAlign.left,
-                                          style: TextStyle(
-                                              fontSize: 16,
-                                              fontWeight: FontWeight.bold,
-                                              color: Color.fromARGB(
-                                                  255, 0, 0, 0))),
-                                      Text("Count : 3",
-                                          textAlign: TextAlign.left,
-                                          style: TextStyle(
-                                              fontSize: 16,
-                                              fontWeight: FontWeight.bold,
-                                              color:
-                                                  Color.fromARGB(255, 0, 0, 0)))
-                                    ],
-                                  ),
-                                )
-                              ],
-                            ),
-                          ),
-                          onTap: () {/* react to the tile being tapped */}),
-                    ),
-                  ),
-                  Container(
-                    decoration: new BoxDecoration(
-                      boxShadow: [
-                        BoxShadow(
-                          color: Color.fromARGB(255, 151, 170, 159)
-                              .withOpacity(.5),
-                          blurRadius: 20.0, // soften the shadow
-                          spreadRadius: 0.0, //extend the shadow
-                          offset: Offset(
-                            5.0, // Move to right 10  horizontally
-                            5.0, // Move to bottom 10 Vertically
-                          ),
-                        )
-                      ],
-                    ),
-                    child: Card(
-                      shape: RoundedRectangleBorder(
-                        side: BorderSide(
-                          color: Colors.green.shade300,
-                        ),
-                        borderRadius: BorderRadius.circular(5.0),
-                      ),
-                      child: ListTile(
-                          contentPadding: EdgeInsets.only(
-                              top: 15, bottom: 15, left: 35, right: 35),
-                          horizontalTitleGap: 10.0,
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(5)),
-                          tileColor: Color.fromARGB(255, 255, 255, 255),
-                          title: Container(
-                            child: Column(
-                              children: [
-                                Row(
-                                  children: [
-                                    Icon(Icons.gps_fixed),
-                                    Text(
-                                        "  6th St. TODA (GREEN TRICYCLE TERMINAL)",
-                                        style: TextStyle(
-                                            fontSize: 13,
-                                            color: Color.fromARGB(
-                                                255, 6, 149, 52)))
-                                  ],
-                                ),
-                                SizedBox(
-                                  height: 20,
-                                ),
-                                Row(
-                                  children: [
-                                    Icon(Icons.add_location_alt),
-                                    Text(
-                                        "  6th St. TODA (GREEN TRICYCLE TERMINAL)",
-                                        style: TextStyle(
-                                            fontSize: 13,
-                                            color:
-                                                Color.fromARGB(255, 6, 122, 0)))
-                                  ],
-                                ),
-                                const Divider(
-                                  height: 25,
-                                  thickness: 1,
-                                  indent: 0,
-                                  endIndent: 0,
-                                  color: Color.fromARGB(255, 65, 220, 135),
-                                ),
-                                Container(
-                                  child: Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Text("Jhon lomero",
-                                          textAlign: TextAlign.left,
-                                          style: TextStyle(
-                                              fontSize: 16,
-                                              fontWeight: FontWeight.bold,
-                                              color: Color.fromARGB(
-                                                  255, 0, 0, 0))),
-                                      Text("Count : 3",
-                                          textAlign: TextAlign.left,
-                                          style: TextStyle(
-                                              fontSize: 16,
-                                              fontWeight: FontWeight.bold,
-                                              color:
-                                                  Color.fromARGB(255, 0, 0, 0)))
-                                    ],
-                                  ),
-                                )
-                              ],
-                            ),
-                          ),
-                          onTap: () {/* react to the tile being tapped */}),
-                    ),
-                  ),
-                  Container(
-                    decoration: new BoxDecoration(
-                      boxShadow: [
-                        BoxShadow(
-                          color: Color.fromARGB(255, 151, 170, 159)
-                              .withOpacity(.5),
-                          blurRadius: 20.0, // soften the shadow
-                          spreadRadius: 0.0, //extend the shadow
-                          offset: Offset(
-                            5.0, // Move to right 10  horizontally
-                            5.0, // Move to bottom 10 Vertically
-                          ),
-                        )
-                      ],
-                    ),
-                    child: Card(
-                      shape: RoundedRectangleBorder(
-                        side: BorderSide(
-                          color: Colors.green.shade300,
-                        ),
-                        borderRadius: BorderRadius.circular(5.0),
-                      ),
-                      child: ListTile(
-                          contentPadding: EdgeInsets.only(
-                              top: 15, bottom: 15, left: 35, right: 35),
-                          horizontalTitleGap: 10.0,
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(5)),
-                          tileColor: Color.fromARGB(255, 255, 255, 255),
-                          title: Container(
-                            child: Column(
-                              children: [
-                                Row(
-                                  children: [
-                                    Icon(Icons.gps_fixed),
-                                    Text(
-                                        "  6th St. TODA (GREEN TRICYCLE TERMINAL)",
-                                        style: TextStyle(
-                                            fontSize: 13,
-                                            color: Color.fromARGB(
-                                                255, 6, 149, 52)))
-                                  ],
-                                ),
-                                SizedBox(
-                                  height: 20,
-                                ),
-                                Row(
-                                  children: [
-                                    Icon(Icons.add_location_alt),
-                                    Text(
-                                        "  6th St. TODA (GREEN TRICYCLE TERMINAL)",
-                                        style: TextStyle(
-                                            fontSize: 13,
-                                            color:
-                                                Color.fromARGB(255, 6, 122, 0)))
-                                  ],
-                                ),
-                                const Divider(
-                                  height: 25,
-                                  thickness: 1,
-                                  indent: 0,
-                                  endIndent: 0,
-                                  color: Color.fromARGB(255, 65, 220, 135),
-                                ),
-                                Container(
-                                  child: Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Text("Jhon lomero",
-                                          textAlign: TextAlign.left,
-                                          style: TextStyle(
-                                              fontSize: 16,
-                                              fontWeight: FontWeight.bold,
-                                              color: Color.fromARGB(
-                                                  255, 0, 0, 0))),
-                                      Text("Count : 3",
-                                          textAlign: TextAlign.left,
-                                          style: TextStyle(
-                                              fontSize: 16,
-                                              fontWeight: FontWeight.bold,
-                                              color:
-                                                  Color.fromARGB(255, 0, 0, 0)))
-                                    ],
-                                  ),
-                                )
-                              ],
-                            ),
-                          ),
-                          onTap: () {/* react to the tile being tapped */}),
-                    ),
-                  ),
-                  Container(
-                    decoration: new BoxDecoration(
-                      boxShadow: [
-                        BoxShadow(
-                          color: Color.fromARGB(255, 151, 170, 159)
-                              .withOpacity(.5),
-                          blurRadius: 20.0, // soften the shadow
-                          spreadRadius: 0.0, //extend the shadow
-                          offset: Offset(
-                            5.0, // Move to right 10  horizontally
-                            5.0, // Move to bottom 10 Vertically
-                          ),
-                        )
-                      ],
-                    ),
-                    child: Card(
-                      shape: RoundedRectangleBorder(
-                        side: BorderSide(
-                          color: Colors.green.shade300,
-                        ),
-                        borderRadius: BorderRadius.circular(5.0),
-                      ),
-                      child: ListTile(
-                          contentPadding: EdgeInsets.only(
-                              top: 15, bottom: 15, left: 35, right: 35),
-                          horizontalTitleGap: 10.0,
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(5)),
-                          tileColor: Color.fromARGB(255, 255, 255, 255),
-                          title: Container(
-                            child: Column(
-                              children: [
-                                Row(
-                                  children: [
-                                    Icon(Icons.gps_fixed),
-                                    Text(
-                                        "  6th St. TODA (GREEN TRICYCLE TERMINAL)",
-                                        style: TextStyle(
-                                            fontSize: 13,
-                                            color: Color.fromARGB(
-                                                255, 6, 149, 52)))
-                                  ],
-                                ),
-                                SizedBox(
-                                  height: 20,
-                                ),
-                                Row(
-                                  children: [
-                                    Icon(Icons.add_location_alt),
-                                    Text(
-                                        "  6th St. TODA (GREEN TRICYCLE TERMINAL)",
-                                        style: TextStyle(
-                                            fontSize: 13,
-                                            color:
-                                                Color.fromARGB(255, 6, 122, 0)))
-                                  ],
-                                ),
-                                const Divider(
-                                  height: 25,
-                                  thickness: 1,
-                                  indent: 0,
-                                  endIndent: 0,
-                                  color: Color.fromARGB(255, 65, 220, 135),
-                                ),
-                                Container(
-                                  child: Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Text("Jhon lomero",
-                                          textAlign: TextAlign.left,
-                                          style: TextStyle(
-                                              fontSize: 16,
-                                              fontWeight: FontWeight.bold,
-                                              color: Color.fromARGB(
-                                                  255, 0, 0, 0))),
-                                      Text("Count : 3",
-                                          textAlign: TextAlign.left,
-                                          style: TextStyle(
-                                              fontSize: 16,
-                                              fontWeight: FontWeight.bold,
-                                              color:
-                                                  Color.fromARGB(255, 0, 0, 0)))
-                                    ],
-                                  ),
-                                )
-                              ],
-                            ),
-                          ),
-                          onTap: () {/* react to the tile being tapped */}),
-                    ),
-                  ),
-                  Container(
-                    decoration: new BoxDecoration(
-                      boxShadow: [
-                        BoxShadow(
-                          color: Color.fromARGB(255, 151, 170, 159)
-                              .withOpacity(.5),
-                          blurRadius: 20.0, // soften the shadow
-                          spreadRadius: 0.0, //extend the shadow
-                          offset: Offset(
-                            5.0, // Move to right 10  horizontally
-                            5.0, // Move to bottom 10 Vertically
-                          ),
-                        )
-                      ],
-                    ),
-                    child: Card(
-                      shape: RoundedRectangleBorder(
-                        side: BorderSide(
-                          color: Colors.green.shade300,
-                        ),
-                        borderRadius: BorderRadius.circular(5.0),
-                      ),
-                      child: ListTile(
-                          contentPadding: EdgeInsets.only(
-                              top: 15, bottom: 15, left: 35, right: 35),
-                          horizontalTitleGap: 10.0,
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(5)),
-                          tileColor: Color.fromARGB(255, 255, 255, 255),
-                          title: Container(
-                            child: Column(
-                              children: [
-                                Row(
-                                  children: [
-                                    Icon(Icons.gps_fixed),
-                                    Text(
-                                        "  6th St. TODA (GREEN TRICYCLE TERMINAL)",
-                                        style: TextStyle(
-                                            fontSize: 13,
-                                            color: Color.fromARGB(
-                                                255, 6, 149, 52)))
-                                  ],
-                                ),
-                                SizedBox(
-                                  height: 20,
-                                ),
-                                Row(
-                                  children: [
-                                    Icon(Icons.add_location_alt),
-                                    Text(
-                                        "  6th St. TODA (GREEN TRICYCLE TERMINAL)",
-                                        style: TextStyle(
-                                            fontSize: 13,
-                                            color:
-                                                Color.fromARGB(255, 6, 122, 0)))
-                                  ],
-                                ),
-                                const Divider(
-                                  height: 25,
-                                  thickness: 1,
-                                  indent: 0,
-                                  endIndent: 0,
-                                  color: Color.fromARGB(255, 65, 220, 135),
-                                ),
-                                Container(
-                                  child: Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Text("Jhon lomero",
-                                          textAlign: TextAlign.left,
-                                          style: TextStyle(
-                                              fontSize: 16,
-                                              fontWeight: FontWeight.bold,
-                                              color: Color.fromARGB(
-                                                  255, 0, 0, 0))),
-                                      Text("Count : 3",
-                                          textAlign: TextAlign.left,
-                                          style: TextStyle(
-                                              fontSize: 16,
-                                              fontWeight: FontWeight.bold,
-                                              color:
-                                                  Color.fromARGB(255, 0, 0, 0)))
-                                    ],
-                                  ),
-                                )
-                              ],
-                            ),
-                          ),
-                          onTap: () {/* react to the tile being tapped */}),
-                    ),
-                  ),
-                ],
               ),
-            )
-          ],
+            )],
         )));
   }
 }

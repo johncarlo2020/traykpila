@@ -107,6 +107,9 @@ Future<ApiResponse> login(String email, String password) async {
         final errors = jsonDecode(response.body)['errors'];
         apiResponse.error = errors[errors.keys.elementAt(0)][0];
         break;
+        case 429:
+        apiResponse.error ='Too MAny Request';
+        break;
       case 403:
         apiResponse.error = jsonDecode(response.body)['message'];
         break;
@@ -131,6 +134,79 @@ Future<ApiResponse> active_driver(String user_id, String terminal_id, String tri
           'terminal_id': terminal_id,
           'tricycle_id': tricycle_id,
           'active': active
+          });
+
+    switch (response.statusCode) {
+      case 200:
+        break;
+      case 422:
+        final errors = jsonDecode(response.body)['errors'];
+        apiResponse.error = errors[errors.keys.elementAt(0)][0];
+        break;
+      case 429:;
+        apiResponse.error = 'Too Many Request';
+        break;
+      case 403:
+        apiResponse.error = jsonDecode(response.body)['message'];
+        break;
+      default:
+        apiResponse.error = somethingWentWrong;
+        break;
+    }
+  } catch (e) {
+    print(e.toString());
+    apiResponse.error = serverError;
+  }
+  return apiResponse;
+}
+
+Future<ApiResponse> passengerBooking(String passenger_id, String lat, String lng, String passenger_count, String terminal_id, String status,String passenger_location) async {
+  ApiResponse apiResponse = ApiResponse();
+
+  try {
+    final response = await http.post(Uri.parse(passenger_booking),
+        headers: {'Accept': 'application/json'},
+        body: {
+          'passenger_id': passenger_id, 
+          'terminal_id': terminal_id,
+          'passenger_lat': lat,
+          'passenger_lng': lng,
+          'passenger_count': passenger_count,
+          'passenger_location': passenger_location,
+          'status': status
+          });
+
+    switch (response.statusCode) {
+      case 200:
+        break;
+      case 422:
+        final errors = jsonDecode(response.body)['errors'];
+        apiResponse.error = errors[errors.keys.elementAt(0)][0];
+        break;
+      case 429:
+        apiResponse.error ='Too MAny Request';
+        break;
+      case 403:
+        apiResponse.error = jsonDecode(response.body)['message'];
+        break;
+      default:
+        apiResponse.error = somethingWentWrong;
+        break;
+    }
+  } catch (e) {
+    apiResponse.error = serverError;
+  }
+  return apiResponse;
+}
+
+Future<ApiResponse> DriverBookingList(String terminal_id) async {
+  ApiResponse apiResponse = ApiResponse();
+
+  try {
+    final response = await http.post(Uri.parse(driverBookingList),
+        headers: {'Accept': 'application/json'},
+        body: {
+          'terminal_id': terminal_id,
           });
 
     switch (response.statusCode) {

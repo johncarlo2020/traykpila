@@ -12,6 +12,7 @@ import 'package:traykpila/screens/passenger/details.dart' as Details;
 
 import '../../constant.dart';
 import '../../services/user_service.dart';
+import '../models/api.response.dart';
 import 'login.dart';
 import 'package:traykpila/models/terminal_driver.dart';
 
@@ -26,12 +27,17 @@ class _MyWidgetState extends State<Home> {
   final Completer<GoogleMapController> _controller = Completer();
   bool loading = false;
   Timer? timer;
+  late String lat;
+  late String lng;
+  late String address;
+ final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey =
+      GlobalKey<RefreshIndicatorState>();
+
+
   List<LatLng> polylineCoordinates = [];
   LocationData? currentLocation;
 
-  StreamController<List<Terminal_driver>> _streamController = StreamController();
-
-  Future<void> getTerminals() async {
+  Future<List<Terminal_driver>> getTerminals() async {
     String token = await getToken();
 
     final response = await http.post(Uri.parse(activeDriverTerminal), headers: {
@@ -41,7 +47,6 @@ class _MyWidgetState extends State<Home> {
 
     var jsonData = jsonDecode(response.body);
     var jsonArray = jsonData['terminals'];
-    print(jsonArray);
 
      List<Terminal_driver> terminals = [];
     
@@ -58,49 +63,101 @@ class _MyWidgetState extends State<Home> {
       terminals.add(terminal);
 
     }
-    _streamController.sink.add(terminals);
+    return terminals;
 
   }
 
+ 
   signOut() async {
     await logout();
     Navigator.of(context).pushAndRemoveUntil(
         MaterialPageRoute(builder: (context) => Login()), (route) => false);
   }
 
-  void getCurrentLocation() {
+
+
+  void passenger_booking(String Terminal_id) async {
+    int userId = await getUserId();
+    
+    String _host = 'https://maps.google.com/maps/api/geocode/json';
+    String _key = 'AIzaSyDkvOCup04GujFtnVfUFxynfKATbXx0HFg';
+    
+
     Location location = Location();
 
     location.getLocation().then(
-      (location) {
-        setState(() {
-          loading = false;
-        });
+      (location) async {
         currentLocation = location;
+          lat = currentLocation!.latitude!.toString();
+         lng = currentLocation!.longitude!.toString();
+         
+
+           final url = '$_host?key=$_key&language=en&latlng=$lat,$lng';
+        if (lng != null) {
+          var response = await http.get(Uri.parse(url));
+          if (response.statusCode == 200) {
+            Map data = jsonDecode(response.body);
+            address = data["results"][0]["formatted_address"];
+          } else
+            print(null);
+        } else
+          print(null);
+       
+        
       },
     );
+    print(address);
+
+    ApiResponse response = await passengerBooking(userId.toString(), lat.toString(), lng.toString(),'3',Terminal_id,'0',address);
+    if (response.error == null) {
+    ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text('Booking Succesful, Wait for your driver')));
+        
+    } else {
+          ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text('${response.error}')));
+     
+    }
+
+
   }
+  
+
+
 
 
 
   @override
   void initState() {
     loading = true;
-    getCurrentLocation();
     super.initState();
-    Timer.periodic(Duration(seconds: 1), (timer) {
-      getTerminals();
-     });
-    
-
   }
 
-  @override
-void dispose() {
-  _streamController.close();
-}
-
-
+  Widget Terminal(terminals)=>(
+    ListView.builder(
+                              itemCount: terminals.length,
+                              itemBuilder: (context, index){
+                                 Terminal_driver terminal = terminals[index];
+                                  return Card(
+                                        child: ListTile(
+                                            leading: Icon(
+                                              Icons.map,
+                                              size: 30.0,
+                                              color:
+                                                  Color.fromARGB(255, 72, 206, 133),
+                                            ),
+                                            title: Text(terminal.name.toString()+" : "+terminal.count.toString()+" Driver"),
+                                            subtitle:
+                                                Text(terminal.address.toString()),
+                                            trailing: Text('Book'),
+                                            onTap: () {
+                                             passenger_booking(terminal.id.toString());
+                                            }
+                                            //  onTap: ,
+                                            ),
+                                      );
+                                })
+  );
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -169,48 +226,35 @@ void dispose() {
                   endIndent: 0,
                   color: Color.fromARGB(255, 49, 241, 129),
                 ),
-                Expanded(
-                  child: StreamBuilder<List<Terminal_driver>>(
-                    stream: _streamController.stream,
-                    builder: (context, AsyncSnapshot<List<Terminal_driver>> snapshot){
-                      switch (snapshot.connectionState){
-                        case ConnectionState.waiting: return Center(child: CircularProgressIndicator(),);
-                        default: if(snapshot.hasError){
-                          return Text("Please wait....");
-                        }else{
-                          List<Terminal_driver> terminals = snapshot.data!;
-                        return ListView.builder(
-                          itemCount: terminals.length,
-                          itemBuilder: (context, index){
-                             Terminal_driver terminal = terminals[index];
-                              return Card(
-                                    child: ListTile(
-                                        leading: Icon(
-                                          Icons.map,
-                                          size: 30.0,
-                                          color:
-                                              Color.fromARGB(255, 72, 206, 133),
-                                        ),
-                                        title: Text(terminal.name.toString()+" : "+terminal.count.toString()+" Driver"),
-                                        subtitle:
-                                            Text(terminal.address.toString()),
-                                        trailing: Text('Book'),
-                                        onTap: () {
-                                          Navigator.of(context)
-                                              .pushAndRemoveUntil(
-                                                  MaterialPageRoute(
-                                                      builder: (context) =>
-                                                          Details.Details()),
-                                                  (route) => false);
-                                        }
-                                        //  onTap: ,
-                                        ),
-                                  );
-                            });
-                        }
+                RefreshIndicator(
+                  key: _refreshIndicatorKey,
+                  color: Colors.white,
+                  backgroundColor: Colors.blue,
+                  strokeWidth: 4.0,
+                  onRefresh:() async {
+                    setState(() {
+                    getTerminals();
+                    });
+                    
+                  } ,
+                  child: Container(
+                    height: 500,
+                    child: Expanded(
+                      child:FutureBuilder<List<Terminal_driver>>(
+                        future:getTerminals(),
+                        builder: (context, snapshot ){
+                          if (snapshot.data == null) {
+                        return const Center(
+                          child: CircularProgressIndicator(),
+                        );
+                      }else{
+                        List<Terminal_driver> terminals = snapshot.data!;
+                        return Terminal(terminals);
                       }
-                    },
-                  )
+                        },
+                        )
+                    ),
+                  ),
                 )
               ],
             )),

@@ -24,6 +24,11 @@ const terminalCreateNew = baseUrl + '/terminal/createNew';
 const terminalShow = baseUrl + '/terminal';
 const activeDriverTerminal = baseUrl + '/terminalDriver';
 
+const passenger_booking= baseUrl + '/booking/passenger';
+const driverBookingList= baseUrl + '/booking';
+
+
+
 
 
 //tricycle api
