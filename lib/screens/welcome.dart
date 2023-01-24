@@ -42,7 +42,7 @@ class _WelcomeState extends State<Welcome> {
                         image: AssetImage('assets/trayklogo.png'),
                       ),
                       const Text(
-                        'Welcome to TricPila',
+                        'Welcome to TraykPila',
                         textAlign: TextAlign.center,
                         style: TextStyle(
                             fontSize: 35,

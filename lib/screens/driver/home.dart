@@ -287,12 +287,21 @@ class _MyWidgetState extends State<Home> {
                                         fontSize: 16,
                                         fontWeight: FontWeight.bold,
                                         color: Color.fromARGB(255, 0, 0, 0))),
-                                Text("Count : " + passenger_count,
-                                    textAlign: TextAlign.left,
-                                    style: TextStyle(
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.bold,
-                                        color: Color.fromARGB(255, 0, 0, 0)))
+                                 TextButton.icon(
+                                    onPressed: () {
+
+                                    },
+                                    style: TextButton.styleFrom(
+                                      primary: Color.fromARGB(255, 7, 146, 49),
+                                      // Background Color
+                                    ),
+                                    icon: const Icon(
+                                      Icons.check_circle,
+                                      size: 24.0,
+                                    ),
+                                    label: Text('Approved'),
+                                  ),
+                                        
                               ],
                             ),
                           )

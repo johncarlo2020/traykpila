@@ -109,7 +109,7 @@ class _LoginState extends State<Login> {
                 height: 150,
               ),
               const Text(
-                'Welcome to TricPila',
+                'Welcome to TraykPila',
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: 30,
