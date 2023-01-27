@@ -26,6 +26,12 @@ const activeDriverTerminal = baseUrl + '/terminalDriver';
 
 const passenger_booking= baseUrl + '/booking/passenger';
 const driverBookingList= baseUrl + '/booking';
+const bookingApproved= baseUrl + '/booking/approve';
+const bookingDetails= baseUrl + '/booking/details';
+const bookingShow= baseUrl + '/booking/show';
+
+
+
 
 
 

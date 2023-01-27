@@ -8,7 +8,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
 import 'package:http/http.dart' as http;
 import 'package:traykpila/models/terminal_driver.dart';
-import 'package:traykpila/screens/passenger/details.dart' as Details;
+import 'package:traykpila/screens/passenger/details.dart' ;
 
 import '../../constant.dart';
 import '../../services/user_service.dart';
@@ -29,7 +29,8 @@ class _MyWidgetState extends State<Home> {
   Timer? timer;
   late String lat;
   late String lng;
-  late String address;
+  late String address='';
+  late String status;
   final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey =
       GlobalKey<RefreshIndicatorState>();
 
@@ -90,6 +91,10 @@ class _MyWidgetState extends State<Home> {
           if (response.statusCode == 200) {
             Map data = jsonDecode(response.body);
             address = data["results"][0]["formatted_address"];
+            if(address==''){
+              ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Please Try Again')));
+            }
           } else
             print(null);
         } else
@@ -101,6 +106,14 @@ class _MyWidgetState extends State<Home> {
     ApiResponse response = await passengerBooking(userId.toString(),
         lat.toString(), lng.toString(), '3', Terminal_id, '0', address);
     if (response.error == null) {
+      setState(() {
+        loading=true;
+        timer = Timer.periodic(Duration(seconds: 1), (Timer t) =>  booking_Details(response.data.toString()));
+        
+       
+       
+      });
+      print(response.data.toString());
       ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Booking Succesful, Wait for your driver')));
     } else {
@@ -109,9 +122,35 @@ class _MyWidgetState extends State<Home> {
     }
   }
 
+   void booking_Details(id) async {
+    final response = await http.post(Uri.parse(bookingShow), headers: {
+      'Accept': 'application/json',
+    },body:{
+      'id':id
+    });
+
+    var jsonData = jsonDecode(response.body);
+    var jsonArray = jsonData['booking'];
+
+    for (var jsonBooking in jsonArray) {
+      setState(() {
+        status=jsonBooking['status'];
+         if(status=='1'){
+          timer?.cancel();
+          loading=false;
+          Navigator.of(context).pushAndRemoveUntil(
+                MaterialPageRoute(builder: (context) =>  Details(id)),
+                (route) => false);
+        }
+        
+        print(status);
+      });
+    }
+  }
+
   @override
   void initState() {
-    loading = true;
+    loading = false;
     super.initState();
   }
 
@@ -220,7 +259,10 @@ class _MyWidgetState extends State<Home> {
                         getTerminals();
                       });
                     },
-                    child: Container(
+                    child: loading == true ? const Center(
+                      child: CircularProgressIndicator(),
+                    )
+                    : Container(
                       height: 500,
                       child: Expanded(
                           child: FutureBuilder<List<Terminal_driver>>(

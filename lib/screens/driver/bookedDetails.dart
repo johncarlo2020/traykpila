@@ -1,14 +1,79 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:flutter_polyline_points/flutter_polyline_points.dart';
+import 'package:location/location.dart';
+
+import 'package:traykpila/constant.dart';
+import 'package:http/http.dart' as http;
 import 'package:traykpila/constant.dart';
 
-class BookedDetails extends StatefulWidget {
-  const BookedDetails({super.key});
+import '../../models/api.response.dart';
+import '../../models/booking.dart';
+import '../../services/user_service.dart';
 
+class BookedDetails extends StatefulWidget {
+  String id;
+  BookedDetails(this.id);
   @override
-  State<BookedDetails> createState() => _BookedDetailsState();
+  State<BookedDetails> createState(){
+    return _BookedDetailsState(this.id);
+  } 
 }
 
 class _BookedDetailsState extends State<BookedDetails> {
+  String id;
+  _BookedDetailsState(this.id);
+
+  Booking? booking;
+  late String passenger_location='';
+  late String passenger_count='';
+  late String passenger_name='';
+  late String driver_lat='';
+  late String driver_lng='';
+  late String passenger_lat='';
+  late String passenger_lng='';
+
+  List<LatLng> polylineCoordinates = [];
+
+
+
+
+   @override
+  void initState() {
+    booking_Details();
+    super.initState();
+  }
+
+  Future <List<Booking>> booking_Details() async {
+    final response = await http.post(Uri.parse(bookingDetails), headers: {
+      'Accept': 'application/json',
+    },body:{
+      'id':id
+    });
+
+    var jsonData = jsonDecode(response.body);
+    var jsonArray = jsonData['booking'];
+    List<Booking> booking = [];
+
+    for (var jsonBooking in jsonArray) {
+      setState(() {
+        passenger_location=jsonBooking['passenger_location'];
+        passenger_count=jsonBooking['passenger_count'];
+        passenger_name=jsonBooking['name'];
+        driver_lat=jsonBooking['driver_lat'];
+        driver_lng=jsonBooking['driver_lng'];
+        passenger_lat=jsonBooking['passenger_lat'];
+        passenger_lng=jsonBooking['passenger_lng'];
+        print(passenger_lat);
+
+
+      });
+    }
+    return booking;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -28,7 +93,31 @@ class _BookedDetailsState extends State<BookedDetails> {
                   const BoxDecoration(color: Color.fromRGBO(37, 195, 108, 1.0)),
               width: double.infinity,
               height: MediaQuery.of(context).size.width * 0.90,
-              child: const Text('map here'),
+              child: GoogleMap(
+        initialCameraPosition: 
+          CameraPosition(target: (LatLng(double.parse(driver_lat),double.parse(driver_lng))), zoom:  17),
+          polylines: {
+            Polyline(
+            polylineId: PolylineId("route"),
+            points:polylineCoordinates,
+            )
+          },
+          markers: {
+            Marker(
+              markerId: const MarkerId("currentLocation"),
+              position:LatLng(double.parse(driver_lat),double.parse(driver_lng))
+              ),
+            
+            // Marker(
+            //   markerId: MarkerId("source"),
+            //   position:sourceLocation,
+            //   ),
+            //   Marker(
+            //   markerId: MarkerId("destiantion"),
+            //   position:destinationLocation,
+            //   ),
+          },
+        ),
             ),
             Padding(
               padding: const EdgeInsets.all(8.0),
@@ -48,7 +137,7 @@ class _BookedDetailsState extends State<BookedDetails> {
                           fit: BoxFit.cover,
                         )),
                     title: Text(
-                      'Jhon lomero',
+                      passenger_name,
                       style: TextStyle(
                         fontSize: 20,
                         //COLOR DEL TEXTO TITULO
@@ -56,7 +145,7 @@ class _BookedDetailsState extends State<BookedDetails> {
                       ),
                     ),
                     subtitle: Flexible(
-                      child: Text('6th St. TODA (GREEN TRICYCLE TERMINAL)',
+                      child: Text(passenger_location,
                           style: TextStyle(
                             fontSize: 11,
                             //COLOR DEL TEXTO TITULO
@@ -64,7 +153,7 @@ class _BookedDetailsState extends State<BookedDetails> {
                           )),
                     ),
                     trailing: Text(
-                      '3',
+                      passenger_count,
                       style: TextStyle(
                         fontSize: 30,
                         //COLOR DEL TEXTO TITULO

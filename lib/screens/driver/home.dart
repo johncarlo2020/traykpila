@@ -45,6 +45,9 @@ class _MyWidgetState extends State<Home> {
   String Tryk_name = '';
   String Tryk_image = '';
   String Tryk_id = '';
+  late String lat;
+  late String lng;
+  late String address;
 
   int active = 0;
 
@@ -117,6 +120,7 @@ class _MyWidgetState extends State<Home> {
 
       bookings.add(booking);
     }
+    print(bookings);
 
     return bookings;
   }
@@ -138,6 +142,57 @@ class _MyWidgetState extends State<Home> {
         currentLocation = location;
       },
     );
+  }
+
+  void ApproveBooking(String id) async{
+
+    int userId = await getUserId();
+
+    String _host = 'https://maps.google.com/maps/api/geocode/json';
+    String _key = 'AIzaSyDkvOCup04GujFtnVfUFxynfKATbXx0HFg';
+
+    Location location = Location();
+
+    location.getLocation().then(
+      (location) async {
+        currentLocation = location;
+        lat = currentLocation!.latitude!.toString();
+        lng = currentLocation!.longitude!.toString();
+
+        final url = '$_host?key=$_key&language=en&latlng=$lat,$lng';
+        if (lng != null) {
+          var response = await http.get(Uri.parse(url));
+          if (response.statusCode == 200) {
+            Map data = jsonDecode(response.body);
+            address = data["results"][0]["formatted_address"];
+          } else
+            print(null);
+        } else
+          print(null);
+      },
+    );
+    print(address);
+
+    ApiResponse response = await approve_Booking(
+      id,
+      lat.toString(),
+      lng.toString(),
+      Tryk_id, 
+      '1', 
+      userId.toString()
+      );
+    if (response.error == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Booking Approved')));
+          Navigator.of(context).pushAndRemoveUntil(
+                MaterialPageRoute(builder: (context) => BookedDetails(id)),
+                (route) => false);
+    } else {
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text('${response.error}')));
+    }
+    print(id);
+
   }
 
   void getUser() async {
@@ -225,7 +280,7 @@ class _MyWidgetState extends State<Home> {
   }
 
   Widget DriverTerminal(
-          String Name, String passenger_location, String passenger_count) =>
+          String Name, String passenger_location, String passenger_count, String id) =>
       (active == 1
           ? Container(
               decoration: new BoxDecoration(
@@ -289,7 +344,7 @@ class _MyWidgetState extends State<Home> {
                                         color: Color.fromARGB(255, 0, 0, 0))),
                                  TextButton.icon(
                                     onPressed: () {
-
+                                        ApproveBooking(id);
                                     },
                                     style: TextButton.styleFrom(
                                       primary: Color.fromARGB(255, 7, 146, 49),
@@ -388,16 +443,7 @@ class _MyWidgetState extends State<Home> {
             ),
           ],
         ),
-        drawer: NavigationDrawer(),
-        floatingActionButton: FloatingActionButton(
-          onPressed: () {
-            Navigator.of(context).pushAndRemoveUntil(
-                MaterialPageRoute(builder: (context) => BookedDetails()),
-                (route) => false);
-          },
-          backgroundColor: Colors.green,
-          child: const Icon(Icons.navigation),
-        ),
+      
         body: SingleChildScrollView(
           child: (Column(
             children: [
@@ -784,8 +830,10 @@ class _MyWidgetState extends State<Home> {
                         future: DriverBookingList(),
                         builder: (context, snapshot) {
                           if (snapshot.data == null) {
+                            print('null');
                             return const Center(
                               child: CircularProgressIndicator(),
+                              
                             );
                           } else {
                             List<Booking> bookings = snapshot.data!;
@@ -797,7 +845,9 @@ class _MyWidgetState extends State<Home> {
                                   return DriverTerminal(
                                       booking.name.toString(),
                                       booking.passenger_location.toString(),
-                                      booking.passenger_count.toString());
+                                      booking.passenger_count.toString(),
+                                      booking.id.toString()
+                                      );
                                 });
                           }
                         }),

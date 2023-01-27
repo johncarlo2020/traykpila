@@ -33,19 +33,19 @@ class Booking {
 
   factory Booking.fromJson(Map<String, dynamic> json) {
     return Booking(
-      id: json['id'],
-      driver_id: json['driver_id'],
-      passenger_id: json['passenger_id'],
-      name: json['name'],
-      terminal_id: json['terminal_id'],
-      tricycle_id: json['tricycle_id'],
-      passenger_lat: json['passenger_lat'],
-      passenger_lng: json['passenger_lng'],
-      passenger_count: json['passenger_count'],
-      passenger_location: json['passenger_location'],
-      driver_lat: json['id'],
-      driver_lng: json['driver_lng'],
-      status: json['status'],
+      id: json['booking']['id'],
+      driver_id: json['booking']['driver_id'],
+      passenger_id: json['booking']['passenger_id'],
+      name: json['booking']['name'],
+      terminal_id: json['booking']['terminal_id'],
+      tricycle_id: json['booking']['tricycle_id'],
+      passenger_lat: json['booking']['passenger_lat'],
+      passenger_lng: json['booking']['passenger_lng'],
+      passenger_count: json['booking']['passenger_count'],
+      passenger_location: json['booking']['passenger_location'],
+      driver_lat: json['booking']['id'],
+      driver_lng: json['booking']['driver_lng'],
+      status: json['booking']['status'],
     );
   }
 }

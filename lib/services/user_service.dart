@@ -11,6 +11,8 @@ import 'package:traykpila/models/terminal.dart';
 import 'dart:convert';
 
 import '../models/user.dart';
+import '../models/booking.dart';
+
 
 Future<ApiResponse> TerminalAdd(String name,String address,String lat,String lng, String? image) async {
   ApiResponse apiResponse = ApiResponse();
@@ -178,6 +180,9 @@ Future<ApiResponse> passengerBooking(String passenger_id, String lat, String lng
 
     switch (response.statusCode) {
       case 200:
+      
+        final data = jsonDecode(response.body)['booking']['id'];
+        apiResponse.data= data;
         break;
       case 422:
         final errors = jsonDecode(response.body)['errors'];
@@ -195,6 +200,82 @@ Future<ApiResponse> passengerBooking(String passenger_id, String lat, String lng
     }
   } catch (e) {
     apiResponse.error = serverError;
+  }
+  print(apiResponse.data);
+  return apiResponse;
+}
+
+Future<ApiResponse> approve_Booking(String id, String lat, String lng,  String tricycle_id, String status,String driver_id) async {
+  ApiResponse apiResponse = ApiResponse();
+
+  try {
+    final response = await http.post(Uri.parse(bookingApproved),
+        headers: {'Accept': 'application/json'},
+        body: {
+          'id': id, 
+          'tricycle_id': tricycle_id,
+          'driver_lat': lat,
+          'driver_lng': lng,
+          'driver_id': driver_id,
+          'status': status
+          });
+
+    switch (response.statusCode) {
+      case 200:
+        break;
+      case 422:
+        final errors = jsonDecode(response.body)['errors'];
+        apiResponse.error = errors[errors.keys.elementAt(0)][0];
+        break;
+      case 429:
+        apiResponse.error ='Too MAny Request';
+        break;
+      case 403:
+        apiResponse.error = jsonDecode(response.body)['message'];
+        break;
+      default:
+        apiResponse.error = somethingWentWrong;
+        break;
+    }
+  } catch (e) {
+    apiResponse.error = serverError;
+    print(e.toString());
+  }
+  return apiResponse;
+}
+
+Future<ApiResponse> booking_details(String id) async {
+  ApiResponse apiResponse = ApiResponse();
+
+  try {
+    final response = await http.post(Uri.parse(bookingDetails),
+        headers: {'Accept': 'application/json'},
+        body: {
+          'id': id, 
+          });
+
+    switch (response.statusCode) {
+      case 200:
+        apiResponse.data = jsonDecode(response.body)['booking'];
+        print(apiResponse.data);
+        break;
+      case 422:
+        final errors = jsonDecode(response.body)['errors'];
+        apiResponse.error = errors[errors.keys.elementAt(0)][0];
+        break;
+      case 429:
+        apiResponse.error ='Too MAny Request';
+        break;
+      case 403:
+        apiResponse.error = jsonDecode(response.body)['message'];
+        break;
+      default:
+        apiResponse.error = somethingWentWrong;
+        break;
+    }
+  } catch (e) {
+    apiResponse.error = serverError;
+    print(e.toString());
   }
   return apiResponse;
 }
